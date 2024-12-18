@@ -5,6 +5,7 @@
 # define WIDTH 1280
 # define HEIGHT 720
 # define BLOCK 64
+# define DEBUG 0
 
 /*
 ** keycode == 65307  Escape key
