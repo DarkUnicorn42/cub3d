@@ -46,7 +46,7 @@ void move_player(t_player *player)
 	if(player->key_down)
 		player->y += speed;
 	if(player->key_left)
-		player->y -= speed;
+		player->x -= speed;
 	if(player->key_right)
-		player->y += speed;
+		player->x += speed;
 }
