@@ -25,7 +25,7 @@
 
 # define PI 3.14159265359
 
-// # include "mlx/mlx.h"
+# include "mlx/mlx.h"
 # include "libft/libft.h"
 # include <stdio.h>
 # include <stdlib.h>

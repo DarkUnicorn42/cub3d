@@ -4,19 +4,19 @@ int	surrounded_by_walls(char **map, int i)
 {
 	if (i == 0)
 	{
-		if (abs(ft_strlen(map[i]) - ft_strlen(map[i + 1])) >= 2)
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
 			return (0);
 	}
 	if (map[i + 1] == NULL)
 	{
-		if (abs(ft_strlen(map[i]) - ft_strlen(map[i - 1])) >= 2)
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
 			return (0);
 	}
 	else
 	{
-		if (abs(ft_strlen(map[i]) - ft_strlen(map[i - 1])) >= 2)
-			return (0);		
-		if (abs(ft_strlen(map[i]) - ft_strlen(map[i + 1])) >= 2)
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
+			return (0);
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
 			return (0);
 	}
 	return (1);
@@ -57,10 +57,10 @@ int	elements_checker(char *line)
 int	check_map(char **map)
 {
 	int	i;
-	int	ret;
+	// int	ret;
 
 	i = 0;
-	ret = 0;
+	// ret = 0;
 	while (map[i])
 	{
 		if (!elements_checker(map[i]))
@@ -118,7 +118,7 @@ int	line_check(char *line, t_game *data)
 	else if (!ft_strncmp(line, "SO", 2))
 		return (texture_identifier(2, line, data));
 	else if (!ft_strncmp(line, "WE", 2))
-		return (texture_identifier(3, line, data));	
+		return (texture_identifier(3, line, data));
 	else if (!ft_strncmp(line, "EA", 2))
 		return (texture_identifier(4, line, data));
 	else if (!ft_strcmp(line, "\n"))
