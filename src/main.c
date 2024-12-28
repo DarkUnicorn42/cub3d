@@ -57,10 +57,12 @@ void clear_image(t_game *game)
 			put_pixel(x, y, 0, game);
 }
 
-void	init_game(t_game *game)
+void	init_game(t_game *game, char *file)
 {
+	validation(game, file);
 	init_player(&game->player);
-	game->map = get_map();
+	game->fd = open(file, O_RDONLY);
+	parsing(game);
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3d");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
@@ -158,12 +160,13 @@ int	draw_loop(t_game *game)
 	return (0);
 }
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	t_game game;
 
-	init_game(&game);
-
+	if (argc != 2)
+		return (-1);
+	init_game(&game, argv[1]);
 	mlx_hook(game.win, 2, 1L<<0, key_press, &game.player);
 	mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
 

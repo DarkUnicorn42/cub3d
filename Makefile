@@ -40,3 +40,6 @@ re: fclean all
 
 # Phony Targets
 .PHONY: all clean fclean re
+
+make test1:
+	cc tests/test.c unity/src/unity.c src/gnl/get_next_line.c src/gnl/get_next_line_utils.c src/parser.c src/error.c src/validation.c include/libft/libft.a && ./a.out

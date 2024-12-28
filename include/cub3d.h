@@ -25,11 +25,13 @@
 
 # define PI 3.14159265359
 
-# include "mlx/mlx.h"
+// # include "mlx/mlx.h"
 # include "libft/libft.h"
 # include <stdio.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include <fcntl.h>
+# include <unistd.h>
 # include <math.h>
 
 typedef struct s_player
@@ -51,13 +53,16 @@ typedef struct s_game
 	void	*mlx;
 	void	*win;
 	void	*img;
-
 	char	*data;
+	int		fd;
 	int		bpp;
 	int		size_line;
 	int		endian;
 	t_player	player;
-
+	char		*north_texture;
+	char		*west_texture;
+	char		*south_texture;
+	char		*east_texture;
 	char **map;
 } t_game;
 
@@ -65,5 +70,22 @@ void	init_player(t_player *player);
 int		key_press(int keycode, t_player *player);
 int		key_release(int keycode, t_player *player);
 void	move_player(t_player *player);
+int		error(int err_code);
+
+// parser
+
+int		validation(t_game *data, char *file);
+int		map_file_validation(char *file);
+int		parsing(t_game *data);
+int		elements_checker(char *line);
+
+// get_next_line
+
+char	*get_next_line(int fd);
+char	*ft_strchr_gnl(const char *str, int c);
+size_t	ft_strlen_gnl(char *str);
+char	*ft_strjoin_gnl(char *buffer, char *new_s);
+char	*ft_substr_gnl(char *s, unsigned int start, size_t len);
+char	*ft_strdup_gnl(char *str1);
 
 #endif
