@@ -1,22 +1,5 @@
 #include "../include/cub3d.h"
 
-char **get_map(void)
-{
-    char **map = malloc(sizeof(char *) * 11);
-    map[0] = "111111111111111";
-    map[1] = "100000000000001";
-    map[2] = "100000000000001";
-    map[3] = "100000100000001";
-    map[4] = "100000000000001";
-    map[5] = "100000010000001";
-    map[6] = "100001000000001";
-    map[7] = "100000000000001";
-    map[8] = "100000000000001";
-    map[9] = "111111111111111";
-    map[10] = NULL;
-    return (map);
-}
-
 void	put_pixel(int x, int y, int color, t_game *game)
 {
 	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
@@ -57,17 +40,20 @@ void clear_image(t_game *game)
 			put_pixel(x, y, 0, game);
 }
 
-void	init_game(t_game *game, char *file)
+int	init_game(t_game *game, char *file)
 {
-	validation(game, file);
+	if (!validation(game, file))
+		return (0);
 	init_player(&game->player);
 	game->fd = open(file, O_RDONLY);
-	parsing(game);
+	if (!parsing(game))
+		return (error(INVALID_MAP));
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3d");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	return (1);
 }
 
 bool	touch(float px, float py, t_game *game)
@@ -165,8 +151,9 @@ int	main(int argc, char **argv)
 	t_game game;
 
 	if (argc != 2)
-		return (-1);
-	init_game(&game, argv[1]);
+		return (error(NO_FILE));
+	if (!init_game(&game, argv[1]))
+		return (0);
 	mlx_hook(game.win, 2, 1L<<0, key_press, &game.player);
 	mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
 

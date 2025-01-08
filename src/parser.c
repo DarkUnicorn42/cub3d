@@ -7,7 +7,7 @@ int	surrounded_by_walls(char **map, int i)
 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
 			return (0);
 	}
-	if (map[i + 1] == NULL)
+	else if (map[i + 1] == NULL)
 	{
 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
 			return (0);
@@ -64,13 +64,14 @@ int	check_map(char **map)
 	while (map[i])
 	{
 		if (!elements_checker(map[i]))
-			return (error(4));
+			return (0);
 		if (i == 0 || map[i + 1] == NULL)
 		{
 			if (!first_or_last_line(map[i]))
-				return (error(4));
+				return (0);
 		}
-		surrounded_by_walls(map, i);
+		if (!surrounded_by_walls(map, i))
+			return (0);
 		i++;
 	}
 	return (1);
@@ -140,9 +141,9 @@ int	parsing(t_game *data)
 			create_map(line, data);
 			break ;
 		}
-		// switch to map parsing function when finished the rest
 		free(line);
-		// data->current_y++;
 	}
-	return (0);
+	if (!check_map(data->map))
+		return (0);
+	return (1);
 }

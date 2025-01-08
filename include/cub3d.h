@@ -44,33 +44,40 @@ typedef struct s_player
 	bool	key_down;
 	bool	key_left;
 	bool	key_right;
-
 	bool	left_rotate;
 	bool	right_rotate;
 } t_player;
+
 typedef struct s_game
 {
-	void	*mlx;
-	void	*win;
-	void	*img;
-	char	*data;
-	int		fd;
-	int		bpp;
-	int		size_line;
-	int		endian;
+	void		*mlx;
+	void		*win;
+	void		*img;
+	char		*data;
+	int			fd;
+	int			bpp;
+	int			size_line;
+	int			endian;
 	t_player	player;
 	char		*north_texture;
 	char		*west_texture;
 	char		*south_texture;
 	char		*east_texture;
-	char **map;
+	char 		**map;
 } t_game;
 
-void	init_player(t_player *player);
+typedef enum	s_error
+{
+	NO_FILE,
+	INVALID_FILE,
+	INVALID_MAP
+}	t_error;
+
+int	init_player(t_player *player);
 int		key_press(int keycode, t_player *player);
 int		key_release(int keycode, t_player *player);
 void	move_player(t_player *player);
-int		error(int err_code);
+int		error(t_error code);
 
 // parser
 

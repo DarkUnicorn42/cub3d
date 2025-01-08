@@ -4,7 +4,7 @@ int	validation(t_game *data, char *file)
 {
 	(void)data;
 	if (!map_file_validation(file))
-		return (error(1));
+		return (error(INVALID_FILE));
 	return (1);
 }
 
@@ -18,9 +18,9 @@ int	map_file_validation(char *file)
 	close (fd);
 	// if *file == '.'
 	// *file++;
-	while (*file != '.')
+	while (*file != '.' && *file)
 		file++;
-	if (ft_strcmp(file, ".cub") == 0)
+	if (*file && ft_strcmp(file, ".cub") == 0)
 		return (1);
 	else
 		return (0);
