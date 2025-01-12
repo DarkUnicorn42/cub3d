@@ -81,16 +81,16 @@ typedef struct s_game
 	int			size_line;
 	int			endian;
 	t_player	player;
-	char		*north_texture;
-	char		*west_texture;
-	char		*south_texture;
-	char		*east_texture;
+    char        *north_texture_path;
+    char        *south_texture_path;
+    char        *west_texture_path;
+    char        *east_texture_path;
 	char 		**map;
 
-	// t_texture   north_texture;
-    // t_texture   south_texture;
-    // t_texture   west_texture;
-    // t_texture   east_texture;
+	t_texture   north_texture;
+    t_texture   south_texture;
+    t_texture   west_texture;
+    t_texture   east_texture;
 } t_game;
 
 typedef enum	s_error
@@ -117,6 +117,12 @@ float distance(float x, float y);
 float fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
 void draw_line(t_player *player, t_game *game, float ray_angle, int column);
 int draw_loop(t_game *game);
+
+// textures
+
+int load_texture(t_game *game, t_texture *texture, char *path);
+int load_all_textures(t_game *game);
+void free_texture_paths(t_game *game);
 
 // parser
 

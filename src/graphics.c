@@ -85,27 +85,48 @@ void draw_line(t_player *player, t_game *game, float ray_angle, int column)
         ray.ray_y += sin_angle;
     }
 
-    // Calculate the distance to the wall
+    // Calculate distance and hit side
     ray.distance = fixed_dist(player->x, player->y, ray.ray_x, ray.ray_y, game);
-
-    // Determine the hit side (horizontal or vertical)
     if (fabs(cos_angle) > fabs(sin_angle))
         ray.hit_side = 1;
     else
         ray.hit_side = 0;
 
-    // Placeholder logic for texture ID
-    if (ray.hit_side == 1)
-        ray.texture_id = 0;
-    else
-        ray.texture_id = 1;
+    // Determine texture
+    t_texture *texture = NULL;
+    if (ray.hit_side == 1) // Vertical wall
+    {
+        if (cos_angle > 0)
+            texture = &game->west_texture;
+        else
+            texture = &game->east_texture;
+    }
+    else // Horizontal wall
+    {
+        if (sin_angle > 0)
+            texture = &game->north_texture;
+        else
+            texture = &game->south_texture;
+    }
 
-    // Calculate wall height based on distance
+    // Calculate wall height
     float wall_height = (BLOCK / ray.distance) * (WIDTH / 2);
     int start_y = (HEIGHT - wall_height) / 2;
     int end_y = start_y + wall_height;
 
-    // Render the vertical wall slice for this column
+    // Determine texture X-coordinate
+    float wall_hit;
+    if (ray.hit_side == 1)
+        wall_hit = fmod(ray.ray_y, BLOCK);
+    else
+        wall_hit = fmod(ray.ray_x, BLOCK);
+    int texture_x = (wall_hit / BLOCK) * texture->width;
+
+    // Draw the wall slice with the texture
     for (int y = start_y; y < end_y; y++)
-        put_pixel(column, y, 0xFFFFFF, game); // Placeholder color
+    {
+        int texture_y = ((y - start_y) * texture->height) / wall_height;
+        int color = *(int *)(texture->data + (texture_y * texture->size_line + texture_x * (texture->bpp / 8)));
+        put_pixel(column, y, color, game);
+    }
 }
