@@ -48,6 +48,28 @@ typedef struct s_player
 	bool	right_rotate;
 } t_player;
 
+typedef struct s_texture
+{
+    void    *img;       // Pointer to the MiniLibX image
+    char    *data;      // Pointer to the image pixel data
+    int     width;      // Texture width
+    int     height;     // Texture height
+    int     bpp;        // Bits per pixel
+    int     size_line;  // Size of a single line of pixels
+    int     endian;     // Endianess of the data
+} t_texture;
+
+typedef struct s_ray
+{
+    float ray_x;          // Current X coordinate of the ray
+    float ray_y;          // Current Y coordinate of the ray
+    float distance;       // Distance from player to the wall hit
+    float angle;          // Ray's angle
+    int hit_side;         // Side of the wall hit (0 = horizontal, 1 = vertical)
+    int texture_id;       // ID of the wall texture hit (NO, SO, WE, EA)
+    float wall_hit;       // The X or Y position where the ray hit the wall
+} t_ray;
+
 typedef struct s_game
 {
 	void		*mlx;
@@ -64,6 +86,11 @@ typedef struct s_game
 	char		*south_texture;
 	char		*east_texture;
 	char 		**map;
+
+	// t_texture   north_texture;
+    // t_texture   south_texture;
+    // t_texture   west_texture;
+    // t_texture   east_texture;
 } t_game;
 
 typedef enum	s_error
@@ -73,11 +100,23 @@ typedef enum	s_error
 	INVALID_MAP
 }	t_error;
 
-int	init_player(t_player *player);
+void	init_player(t_player *player);
 int		key_press(int keycode, t_player *player);
 int		key_release(int keycode, t_player *player);
-void	move_player(t_player *player);
+void move_player(t_player *player, t_game *game);
 int		error(t_error code);
+
+// graphics
+
+void	put_pixel(int x, int y, int color, t_game *game);
+void draw_square(int x, int y, int size, int color, t_game *game);
+void draw_map(t_game *game);
+void clear_image(t_game *game);
+bool	touch(float px, float py, t_game *game);
+float distance(float x, float y);
+float fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
+void draw_line(t_player *player, t_game *game, float ray_angle, int column);
+int draw_loop(t_game *game);
 
 // parser
 
