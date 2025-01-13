@@ -81,6 +81,26 @@ void test9(void) {
     TEST_ASSERT_EQUAL_INT(0, elements_checker("111011110"));
 }
 
+void test10(void) {
+
+    printf("TEST 10 - ");
+    printf(BLUE"small rectangle map 6 x 5\n"RST);
+    int ret;
+
+    t_game data;
+    int    fd1 = open("file2.cub", O_RDONLY);
+    data.fd = fd1;
+    ret = parsing(&data);
+    TEST_ASSERT_EQUAL_STRING("111111", data.map[0]);
+    TEST_ASSERT_EQUAL_STRING("100001", data.map[1]);
+    TEST_ASSERT_EQUAL_STRING("1000N1", data.map[2]);
+    TEST_ASSERT_EQUAL_STRING("100001", data.map[3]);
+    TEST_ASSERT_EQUAL_STRING("111111", data.map[4]);
+    TEST_ASSERT_EQUAL_STRING(NULL, data.map[5]);
+    TEST_ASSERT_EQUAL_INT(1, ret);
+}
+
+
 // not needed when using generate_test_runner.rb
 int main(void) {
     UNITY_BEGIN();
@@ -104,6 +124,8 @@ int main(void) {
     RUN_TEST(test8);
     printf("\n");
     RUN_TEST(test9);
+    printf("\n");
+    RUN_TEST(test10);
     printf("\n");
     return UNITY_END();
 }

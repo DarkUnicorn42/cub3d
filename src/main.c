@@ -12,10 +12,8 @@ int	init_game(t_game *game, char *file)
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3d");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-
 	if (!load_all_textures(game))
         return (error(INVALID_FILE));
-
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 	return (1);
 }
@@ -56,11 +54,11 @@ int	main(int argc, char **argv)
 		return (error(NO_FILE));
 	if (!init_game(&game, argv[1]))
 		return (0);
-
 	mlx_hook(game.win, 2, 1L<<0, key_press, &game.player);
 	mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
 
 	mlx_loop_hook(game.mlx, draw_loop, &game);
+
 	mlx_loop(game.mlx);
 
 	return (0);

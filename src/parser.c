@@ -54,13 +54,11 @@ int	elements_checker(char *line)
 	return (1);
 }
 
-int	check_map(char **map)
+int	 check_map(char **map)
 {
 	int	i;
-	// int	ret;
 
 	i = 0;
-	// ret = 0;
 	while (map[i])
 	{
 		if (!elements_checker(map[i]))
