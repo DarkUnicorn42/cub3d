@@ -61,14 +61,20 @@ typedef struct s_texture
 
 typedef struct s_ray
 {
-    float ray_x;          // Current X coordinate of the ray
-    float ray_y;          // Current Y coordinate of the ray
-    float distance;       // Distance from player to the wall hit
-    float angle;          // Ray's angle
-    int hit_side;         // Side of the wall hit (0 = horizontal, 1 = vertical)
-    int texture_id;       // ID of the wall texture hit (NO, SO, WE, EA)
-    float wall_hit;       // The X or Y position where the ray hit the wall
-} t_ray;
+	float		raydirx;
+	float		raydiry;
+	float		sidedistx;
+	float		sidedisty;
+	float		deltadistx;
+	float		deltadisty;
+	float		perpwalldist;
+	int			mapx;
+	int			mapy;
+	int			stepx;
+	int			stepy;
+	int			hit;
+	int			side;
+}				t_ray;
 
 typedef struct s_game
 {
@@ -113,8 +119,6 @@ void draw_square(int x, int y, int size, int color, t_game *game);
 void draw_map(t_game *game);
 void clear_image(t_game *game);
 bool	touch(float px, float py, t_game *game);
-float distance(float x, float y);
-float fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
 void draw_line(t_player *player, t_game *game, float ray_angle, int column);
 int draw_loop(t_game *game);
 
@@ -123,6 +127,7 @@ int draw_loop(t_game *game);
 int load_texture(t_game *game, t_texture *texture, char *path);
 int load_all_textures(t_game *game);
 void free_texture_paths(t_game *game);
+t_texture	*choose_texture(t_ray *ray, t_game *game);
 
 // parser
 

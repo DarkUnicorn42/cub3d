@@ -4,7 +4,7 @@ int load_texture(t_game *game, t_texture *texture, char *path)
 {
     texture->img = mlx_xpm_file_to_image(game->mlx, path, &texture->width, &texture->height);
     if (!texture->img)
-        return (0); // Failed to load texture
+        return (0);
     texture->data = mlx_get_data_addr(texture->img, &texture->bpp, &texture->size_line, &texture->endian);
     return (1);
 }
@@ -28,4 +28,22 @@ void free_texture_paths(t_game *game)
     free(game->south_texture_path);
     free(game->west_texture_path);
     free(game->east_texture_path);
+}
+
+t_texture	*choose_texture(t_ray *ray, t_game *game)
+{
+	if (ray->side == 0)
+	{
+		if (ray->raydirx < 0)
+			return (&game->west_texture);
+		else
+			return (&game->east_texture);
+	}
+	else
+	{
+		if (ray->raydiry < 0)
+			return (&game->north_texture);
+		else
+			return (&game->south_texture);
+	}
 }
