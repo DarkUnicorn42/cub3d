@@ -76,6 +76,18 @@ typedef struct s_ray
 	int			side;
 }				t_ray;
 
+typedef struct s_line
+{
+	float	distance;    // distanceInPixels
+	float	wall_height;
+	int		start_y;
+	int		end_y;
+	float	hit_x;
+	float	hit_y;
+	float	wall_hit;
+	int		texture_x;
+}	t_line;
+
 typedef struct s_game
 {
 	void		*mlx;

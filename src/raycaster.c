@@ -49,7 +49,13 @@ void	init_sidedist_step(t_ray *ray, t_player *player)
 							* ray->deltadisty;
 	}
 }
-
+	/*
+	** perform_dda:
+	**  - Steps through the grid in increments of 1 tile, either in X or Y,
+	**    until we hit a wall ('1').
+	**  - Sets ray->side = 0 if we moved in X (vertical boundary),
+	**    or 1 if we moved in Y (horizontal boundary).
+	*/
 void	perform_dda(t_ray *ray, t_game *game)
 {
 	ray->hit = 0;
@@ -95,66 +101,65 @@ float	compute_corrected_dist(t_ray *ray, t_player *player, float ray_angle)
 	return (distance_in_pixels);
 }
 
-void draw_line(t_player *player, t_game *game, float ray_angle, int column)
+void	draw_column(t_game *game, t_texture *texture,
+				int column, t_line *line)
 {
-    t_ray ray;
-    float distanceInPixels;
-    float wall_height;
-    int start_y, end_y;
+	int	y;
+	int	d;
+	int	color;
+	int	height;
+
+	height = line->end_y - line->start_y;
+	y = line->start_y;
+	while (y < line->end_y)
+	{
+		d = (y - line->start_y) * texture->height / height;
+		color = *(int *)(texture->data
+			+ (d * texture->size_line + line->texture_x * (texture->bpp / 8)));
+		put_pixel(column, y, color, game);
+		y++;
+	}
+}
+
+void	draw_line(t_player *player, t_game *game, float ray_angle, int column)
+{
+	t_ray		ray;
+	t_line		line;
+	t_texture	*texture;
 
 	init_ray(&ray, player, ray_angle);
-
-	// distance the ray travels to go from one x-grid to the next
 	calc_delta_dist(&ray);
-
-	// calculate the initial side distance and the step direction
 	init_sidedist_step(&ray, player);
-
-	/*
-	** perform_dda:
-	**  - Steps through the grid in increments of 1 tile, either in X or Y,
-	**    until we hit a wall ('1').
-	**  - Sets ray->side = 0 if we moved in X (vertical boundary),
-	**    or 1 if we moved in Y (horizontal boundary).
-	*/
 	perform_dda(&ray, game);
 
-	// Compute the distance to the wall
-	distanceInPixels = compute_corrected_dist(&ray, player, ray_angle);
+	// Compute distance
+	line.distance = compute_corrected_dist(&ray, player, ray_angle);
 
-	// Choose the texture based on the side of the wall
-	t_texture *texture = choose_texture(&ray, game);
+	// Pick the texture
+	texture = choose_texture(&ray, game);
+	if (!texture || !texture->data)
+		return ;
 
-    // Compute the wall slice height using corrected distance
-    wall_height = (BLOCK / distanceInPixels) * (WIDTH / 2.0f);
-    start_y = (HEIGHT - wall_height) / 2;
-    end_y = start_y + wall_height;
-    if (start_y < 0) start_y = 0;
-    if (end_y >= HEIGHT) end_y = HEIGHT - 1;
+	// Compute wall height / startY / endY
+	line.wall_height = (BLOCK / line.distance) * (WIDTH / 2.0f);
+	line.start_y = (HEIGHT - line.wall_height) / 2;
+	line.end_y = line.start_y + line.wall_height;
+	if (line.start_y < 0)
+		line.start_y = 0;
+	if (line.end_y >= HEIGHT)
+		line.end_y = HEIGHT - 1;
 
-    // Figure out texture X offset
-    float hitX = player->x + ray.raydirx * (distanceInPixels);
-    float hitY = player->y + ray.raydiry * (distanceInPixels);
+	// Compute intersection point
+	line.hit_x = player->x + ray.raydirx * line.distance;
+	line.hit_y = player->y + ray.raydiry * line.distance;
 
-    float wall_hit;
-    if (ray.side == 0)
-        wall_hit = fmodf(hitY, BLOCK);
-    else
-        wall_hit = fmodf(hitX, BLOCK);
+	// Figure out local offset in the tile
+	if (ray.side == 0)
+		line.wall_hit = fmodf(line.hit_y, BLOCK);
+	else
+		line.wall_hit = fmodf(line.hit_x, BLOCK);
 
-    int texture_x = (int)((wall_hit / BLOCK) * texture->width);
+	line.texture_x = (int)((line.wall_hit / (float)BLOCK) * texture->width);
 
-    if (ray.side == 0 && ray.raydirx > 0)
-        texture_x = texture->width - texture_x - 1;
-    if (ray.side == 1 && ray.raydiry < 0)
-        texture_x = texture->width - texture_x - 1;
-
-    // Draw the wall slice
-    for (int y = start_y; y < end_y; y++)
-    {
-        int d = (y - start_y) * texture->height / (end_y - start_y);
-        int color = *(int *)(texture->data +
-                     (d * texture->size_line + texture_x * (texture->bpp / 8)));
-        put_pixel(column, y, color, game);
-    }
+	draw_column(game, texture, column, &line);
 }
