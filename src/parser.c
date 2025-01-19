@@ -92,23 +92,7 @@ int	create_map(char *line, t_game *data)
 	free(line);
 	return (1);
 }
-// int	texture_identifier(int code, char *line, t_game *data)
-// {
-// 	int	i;
 
-// 	i = 2;
-// 	while (line[i] == ' ')
-// 		i++;
-// 	if (code == 1)
-// 		data->north_texture = ft_substr(line, i, ft_strlen(line) - i);
-// 	else if (code == 2)
-// 		data->south_texture = ft_substr(line, i, ft_strlen(line) - i);
-// 	else if (code == 3)
-// 		data->west_texture = ft_substr(line, i, ft_strlen(line) - i);
-// 	else if (code == 4)
-// 		data->east_texture = ft_substr(line, i, ft_strlen(line) - i);
-// 	return (0);
-// }
 int texture_identifier(int code, char *line, t_game *game)
 {
     int i = 2; // Skip the identifier (e.g., "NO")
@@ -119,7 +103,6 @@ int texture_identifier(int code, char *line, t_game *game)
     if (!path)
         return (0);
 
-
     // Strip trailing newline or spaces in the texture path
     int len = ft_strlen(path);
     while (len > 0 && (path[len - 1] == '\n' || path[len - 1] == ' '))
@@ -127,7 +110,6 @@ int texture_identifier(int code, char *line, t_game *game)
         path[len - 1] = '\0';
         len--;
     }
-    // Assign the path to the correct texture in t_game
     if (code == 1)
         game->north_texture_path = path;
     else if (code == 2)
@@ -190,6 +172,8 @@ int parsing(t_game *data)
         free(line);
     }
 
+	find_player_spawn(data, &data->player); // Find the player spawn
+	
     if (!check_map(data->map)) // Validate the map
         return (0);
 

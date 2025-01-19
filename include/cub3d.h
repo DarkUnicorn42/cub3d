@@ -131,7 +131,6 @@ void draw_square(int x, int y, int size, int color, t_game *game);
 void draw_map(t_game *game);
 void clear_image(t_game *game);
 bool	touch(float px, float py, t_game *game);
-void draw_line(t_player *player, t_game *game, float ray_angle, int column);
 int draw_loop(t_game *game);
 
 // textures
@@ -147,6 +146,22 @@ int		validation(t_game *data, char *file);
 int		map_file_validation(char *file);
 int		parsing(t_game *data);
 int		elements_checker(char *line);
+
+// spawn
+
+void find_player_spawn(t_game *game, t_player *player);
+bool is_spawn_char(char c);
+void init_player_position(t_player *player, int x, int y, char spawn_char);
+
+// raycaster
+
+void	init_ray(t_ray *ray, t_player *player, float ray_angle);
+void	calc_delta_dist(t_ray *ray);
+void	init_sidedist_step(t_ray *ray, t_player *player);
+void	perform_dda(t_ray *ray, t_game *game);
+float	compute_corrected_dist(t_ray *ray, t_player *player, float ray_angle);
+void	draw_column(t_game *game, t_texture *texture, int column, t_line *line);
+void	draw_line(t_player *player, t_game *game, float ray_angle, int column);
 
 // get_next_line
 
