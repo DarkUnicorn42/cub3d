@@ -190,13 +190,10 @@ static int	is_map_line(char *line)
 	int	i;
 
 	i = 0;
-	// Skip any leading spaces, if needed
 	while (line[i] == ' ')
 		i++;
-	// If the line is empty or newline, it's not a map line
 	if (!line[i] || line[i] == '\n')
 		return (0);
-	// Check that every character is valid for map content
 	while (line[i] && line[i] != '\n')
 	{
 		if (!ft_strchr("01NSEW ", line[i]))

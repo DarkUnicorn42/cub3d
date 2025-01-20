@@ -40,49 +40,56 @@ void clear_image(t_game *game)
 			put_pixel(x, y, 0, game);
 }
 
+// bool touch(float px, float py, t_game *game)
+// {
+//     int x = (int)(px / BLOCK);
+//     int y = (int)(py / BLOCK);
+
+//     // Check if the position is in bounds
+//     if (y < 0 || y >= HEIGHT / BLOCK || x < 0 || x >= WIDTH / BLOCK)
+//         return true; // Out of bounds
+
+//     if (game->map[y][x] == '1')
+//         return true; // Wall collision
+//     return false;
+// }
+
 bool touch(float px, float py, t_game *game)
 {
-    int x = (int)(px / BLOCK);
-    int y = (int)(py / BLOCK);
+    int x0 = (int)((px - COLLISION_RADIUS) / BLOCK);
+    int x1 = (int)((px + COLLISION_RADIUS) / BLOCK);
+    int y0 = (int)((py - COLLISION_RADIUS) / BLOCK);
+    int y1 = (int)((py + COLLISION_RADIUS) / BLOCK);
 
-    // Check if the position is in bounds
-    if (y < 0 || y >= HEIGHT / BLOCK || x < 0 || x >= WIDTH / BLOCK)
-        return true; // Out of bounds
-
-    if (game->map[y][x] == '1')
-        return true; // Wall collision
-    return false;
+    for (int mapY = y0; mapY <= y1; mapY++)
+    {
+        for (int mapX = x0; mapX <= x1; mapX++)
+        {
+            if (mapY < 0 || mapY >= HEIGHT / BLOCK ||
+                mapX < 0 || mapX >= WIDTH / BLOCK)
+            {
+                return (true);
+            }
+            if (game->map[mapY][mapX] == '1')
+                return (true);
+        }
+    }
+    return (false);
 }
 
 void draw_floor_ceiling(t_game *game)
 {
-    int x, y;
+    int		x;
+	int		y;
 
-    // Draw ceiling on top half
     for (y = 0; y < HEIGHT / 2; y++)
     {
         for (x = 0; x < WIDTH; x++)
             put_pixel(x, y, game->ceiling_color, game);
     }
-    // Draw floor on bottom half
     for (; y < HEIGHT; y++)
     {
         for (x = 0; x < WIDTH; x++)
             put_pixel(x, y, game->floor_color, game);
     }
 }
-
-// // distance calculation functions
-// float distance(float x, float y)
-// {
-//     return sqrt(x * x + y * y);
-// }
-
-// float fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
-// {
-//     float delta_x = x2 - x1;
-//     float delta_y = y2 - y1;
-//     float angle = atan2(delta_y, delta_x) - game->player.angle;
-//     float fix_dist = distance(delta_x, delta_y) * cos(angle);
-//     return fix_dist;
-// }

@@ -7,6 +7,7 @@
 # define BLOCK 64
 # define DEBUG 0
 
+#define COLLISION_RADIUS 10
 /*
 ** keycode == 65307  Escape key
 ** keycode == 119    W key

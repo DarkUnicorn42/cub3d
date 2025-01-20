@@ -50,13 +50,12 @@ int	key_release(int keycode, t_player *player)
 
 void move_player(t_player *player, t_game *game)
 {
-    int speed = 3;          // Movement speed
-    float angle_speed = 0.03; // Rotation speed
+    int speed = 3;
+    float angle_speed = 0.03;
 
     float cos_angle = cos(player->angle);
     float sin_angle = sin(player->angle);
 
-    // Handle rotation
     if (player->left_rotate)
         player->angle -= angle_speed;
     if (player->right_rotate)
@@ -66,7 +65,6 @@ void move_player(t_player *player, t_game *game)
     if (player->angle < 0)
         player->angle = 2 * PI;
 
-    // Calculate potential movement positions
     float new_x = player->x;
     float new_y = player->y;
 
@@ -92,8 +90,8 @@ void move_player(t_player *player, t_game *game)
     }
 
     // Check for wall collisions before updating position
-    if (!touch(new_x, player->y, game)) // Check horizontal collision
+    if (!touch(new_x, player->y, game))
         player->x = new_x;
-    if (!touch(player->x, new_y, game)) // Check vertical collision
+    if (!touch(player->x, new_y, game))
         player->y = new_y;
 }
