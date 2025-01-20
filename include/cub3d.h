@@ -109,6 +109,7 @@ typedef struct s_game
     char        *west_texture_path;
     char        *east_texture_path;
 	char 		**map;
+	char		**copy_map;
 
 	t_texture   north_texture;
     t_texture   south_texture;

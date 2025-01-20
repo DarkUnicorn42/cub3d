@@ -2,25 +2,30 @@
 
 int	surrounded_by_walls(char **map, int i)
 {
-	if (i == 0)
-	{
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-			return (0);
-	}
-	else if (map[i + 1] == NULL)
-	{
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-			return (0);
-	}
-	else
-	{
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-			return (0);
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-			return (0);
-	}
-	return (1);
+
 }
+
+// int	surrounded_by_walls(char **map, int i)
+// {
+// 	if (i == 0)
+// 	{
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
+// 			return (0);
+// 	}
+// 	else if (map[i + 1] == NULL)
+// 	{
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
+// 			return (0);
+// 	}
+// 	else
+// 	{
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
+// 			return (0);
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
+// 			return (0);
+// 	}
+// 	return (1);
+// }
 
 int	first_or_last_line(char *line)
 {
@@ -49,6 +54,7 @@ int	elements_checker(char *line)
 	{
 		if (!ft_strchr("01NSEW", line[i]))
 			return (0);
+		if (line[i] )
 		i++;
 	}
 	return (1);
@@ -68,6 +74,7 @@ int	 check_map(char **map)
 			if (!first_or_last_line(map[i]))
 				return (0);
 		}
+		//change it to flood fill
 		if (!surrounded_by_walls(map, i))
 			return (0);
 		i++;
@@ -88,6 +95,7 @@ int	create_map(char *line, t_game *data)
 		free(next);
 	}
 	data->map = ft_split(line, '\n');
+	data->copy_map = ft_split(line, '\n');
 	close(data->fd);
 	free(line);
 	return (1);
