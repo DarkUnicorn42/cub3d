@@ -8,6 +8,10 @@ int	error(t_error code)
 	{
 		printf("invalid file\n");
 	}
+	if (code == INVALID_SPAWN)
+	{
+		printf("invalid spawn point\n");
+	}
 	if (code == INVALID_MAP)
 	{
 		// clean up?

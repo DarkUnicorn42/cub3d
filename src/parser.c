@@ -132,12 +132,80 @@ int	line_check(char *line, t_game *data)
 		return (texture_identifier(3, line, data));
 	else if (!ft_strncmp(line, "EA", 2))
 		return (texture_identifier(4, line, data));
+	else if (!ft_strncmp(line, "F ", 2))
+	{
+		data->floor_color = parse_color(line + 2);
+		return (1);
+	}
+	else if (!ft_strncmp(line, "C ", 2))
+	{
+		data->ceiling_color = parse_color(line + 2);
+		return (1);
+	}
 	else if (!ft_strcmp(line, "\n"))
 		return (0);
 	else
 		return (1);
 }
-// changed the logic to create map after parsing texture paths
+
+int	parse_color(char *str)
+{
+	char	**split;
+	int		r, g, b;
+	int		color;
+
+	split = ft_split(str, ',');
+	if (!split || !split[0] || !split[1] || !split[2])
+	{
+		free_split(split);
+		// handle error
+		return (-1);
+	}
+	r = ft_atoi(split[0]);
+	g = ft_atoi(split[1]);
+	b = ft_atoi(split[2]);
+	free_split(split);
+
+	color = (r << 16) | (g << 8) | b;
+	return (color);
+}
+
+void	free_split(char **arr)
+{
+	int	i;
+
+	if (!arr)
+		return;
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
+
+static int	is_map_line(char *line)
+{
+	int	i;
+
+	i = 0;
+	// Skip any leading spaces, if needed
+	while (line[i] == ' ')
+		i++;
+	// If the line is empty or newline, it's not a map line
+	if (!line[i] || line[i] == '\n')
+		return (0);
+	// Check that every character is valid for map content
+	while (line[i] && line[i] != '\n')
+	{
+		if (!ft_strchr("01NSEW ", line[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int parsing(t_game *data)
 {
     char *line;
@@ -159,7 +227,7 @@ int parsing(t_game *data)
                 return (0);
             }
 
-            if (ft_strchr(line, '1')) // Map data starts
+            if (is_map_line(line)) // Map data starts
                 is_map_started = 1;
         }
 
@@ -173,7 +241,7 @@ int parsing(t_game *data)
     }
 
 	find_player_spawn(data, &data->player); // Find the player spawn
-	
+
     if (!check_map(data->map)) // Validate the map
         return (0);
 

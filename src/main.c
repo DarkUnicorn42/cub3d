@@ -22,9 +22,10 @@ int draw_loop(t_game *game)
 {
     t_player *player = &game->player;
 
+
 	move_player(player, game);
     clear_image(game);
-
+	draw_floor_ceiling(game);
     // Debug: Render the 2D map and player position
     if (DEBUG)
     {

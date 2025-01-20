@@ -54,6 +54,24 @@ bool touch(float px, float py, t_game *game)
     return false;
 }
 
+void draw_floor_ceiling(t_game *game)
+{
+    int x, y;
+
+    // Draw ceiling on top half
+    for (y = 0; y < HEIGHT / 2; y++)
+    {
+        for (x = 0; x < WIDTH; x++)
+            put_pixel(x, y, game->ceiling_color, game);
+    }
+    // Draw floor on bottom half
+    for (; y < HEIGHT; y++)
+    {
+        for (x = 0; x < WIDTH; x++)
+            put_pixel(x, y, game->floor_color, game);
+    }
+}
+
 // // distance calculation functions
 // float distance(float x, float y)
 // {

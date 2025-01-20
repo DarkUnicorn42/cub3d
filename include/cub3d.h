@@ -99,6 +99,10 @@ typedef struct s_game
 	int			size_line;
 	int			endian;
 	t_player	player;
+
+	int			floor_color;
+	int			ceiling_color;
+
     char        *north_texture_path;
     char        *south_texture_path;
     char        *west_texture_path;
@@ -115,6 +119,7 @@ typedef enum	s_error
 {
 	NO_FILE,
 	INVALID_FILE,
+	INVALID_SPAWN,
 	INVALID_MAP
 }	t_error;
 
@@ -132,6 +137,7 @@ void draw_map(t_game *game);
 void clear_image(t_game *game);
 bool	touch(float px, float py, t_game *game);
 int draw_loop(t_game *game);
+void draw_floor_ceiling(t_game *game);
 
 // textures
 
@@ -146,6 +152,8 @@ int		validation(t_game *data, char *file);
 int		map_file_validation(char *file);
 int		parsing(t_game *data);
 int		elements_checker(char *line);
+int		parse_color(char *str);
+void	free_split(char **arr);
 
 // spawn
 
