@@ -1,31 +1,31 @@
 #include "../include/cub3d.h"
 
-int	surrounded_by_walls(char **map, int i)
-{
-
-}
-
 // int	surrounded_by_walls(char **map, int i)
 // {
-// 	if (i == 0)
-// 	{
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-// 			return (0);
-// 	}
-// 	else if (map[i + 1] == NULL)
-// 	{
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-// 			return (0);
-// 	}
-// 	else
-// 	{
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-// 			return (0);
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-// 			return (0);
-// 	}
-// 	return (1);
+
 // }
+
+int	surrounded_by_walls(char **map, int i)
+{
+	if (i == 0)
+	{
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
+			return (0);
+	}
+	else if (map[i + 1] == NULL)
+	{
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
+			return (0);
+	}
+	else
+	{
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
+			return (0);
+		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
+			return (0);
+	}
+	return (1);
+}
 
 int	first_or_last_line(char *line)
 {

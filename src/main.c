@@ -18,6 +18,23 @@ int	init_game(t_game *game, char *file)
 	return (1);
 }
 
+int	close_game(t_game *game)
+{
+	free_texture_paths(game);
+	mlx_destroy_image(game->mlx, game->img);
+	mlx_destroy_window(game->mlx, game->win);
+	mlx_destroy_display(game->mlx);
+	free(game->mlx);
+	return (1);
+}
+
+int close_button(t_game *game)
+{
+    close_game(game);
+    exit(0);
+    return (0);
+}
+
 int draw_loop(t_game *game)
 {
     t_player *player = &game->player;
@@ -55,9 +72,9 @@ int	main(int argc, char **argv)
 		return (error(NO_FILE));
 	if (!init_game(&game, argv[1]))
 		return (0);
-	mlx_hook(game.win, 2, 1L<<0, key_press, &game.player);
+	mlx_hook(game.win, 2, 1L<<0, key_press, &game);
 	mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
-
+	mlx_hook(game.win, 17, 0, close_button, &game);
 	mlx_loop_hook(game.mlx, draw_loop, &game);
 
 	mlx_loop(game.mlx);
