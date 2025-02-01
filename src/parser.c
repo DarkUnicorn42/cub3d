@@ -1,30 +1,99 @@
 #include "../include/cub3d.h"
 
+static void change_space_to_wall(char *line, char **map, int index)
+{
+	int		i;
+	char	*new;
+
+	i = 0;
+	new = (char *)malloc(ft_strlen(line) + 1);
+	while (line[i])
+	{
+		if (line[i] == ' ')
+			new[i] = '1';
+		else
+			new[i] = line[i];
+		i++;
+	}
+	new[i] = '\0';
+	free(line);
+	map[index] = new;
+}
+
 // int	surrounded_by_walls(char **map, int i)
 // {
-
+// 	if (i == 0)
+// 	{
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
+// 			return (0);
+// 	}
+// 	else if (map[i + 1] == NULL)
+// 	{
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
+// 			return (0);
+// 	}
+// 	else
+// 	{
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
+// 			return (0);
+// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
+// 			return (0);
+// 	}
+// 	return (1);
 // }
 
-int	surrounded_by_walls(char **map, int i)
+static int	adjacent_to_whitespace(char **map, int row)
 {
-	if (i == 0)
+	char	adj_back;
+	char	adj_front;
+	int		col;
+
+	col = 0;
+	while (map[row][col] == ' ')
 	{
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-			return (0);
+		col++;
 	}
-	else if (map[i + 1] == NULL)
+	while (map[row][col])
 	{
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-			return (0);
-	}
-	else
-	{
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-			return (0);
-		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-			return (0);
+		adj_back = map[row][col - 1];
+		adj_front = map[row][col + 1];
+		if (map[row][col] == ' ')
+		{
+			if (adj_back != '\0' && adj_back != '1' && adj_back != ' ')
+				return (0);
+			if (adj_front != '\0' && adj_front != '1' && adj_front != ' ')
+				return (0);
+		}
+		col++;
 	}
 	return (1);
+}
+
+static int	 surrounded_by_walls(char **map, int row)
+{
+	int		col;
+
+	col = 0;
+	if (row == 0 || map[row + 1] == NULL)
+		return (1);
+	while (map[row][col] == ' ')
+		col++;
+	while (map[row][col])
+	{
+		if ((ft_strlen(map[row]) > ft_strlen(map[row - 1])) && ((size_t)col > ft_strlen(map[row - 1])))
+		{
+			if (map[row][col] != 1)
+				return (0);
+		}
+		if ((ft_strlen(map[row]) > ft_strlen(map[row + 1])) && ((size_t)col > ft_strlen(map[row + 1])) && map[row][col] != '1')
+		{
+			if (map[row][col] != 1)
+				return (0);
+		}
+		col++;
+	}
+	return (1);
+
 }
 
 int	first_or_last_line(char *line)
@@ -34,7 +103,7 @@ int	first_or_last_line(char *line)
 	i = 0;
 	while(line[i])
 	{
-		if (line[i] != '1')
+		if (line[i] != '1' && line[i] != ' ')
 			return (0);
 		i++;
 	}
@@ -48,11 +117,9 @@ int	elements_checker(char *line)
 	i = 0;
 	if (!line)
 		return (0);
-	if (line[0] != '1' || line[ft_strlen(line) - 1] != '1')
-		return (0);
 	while (line[i])
 	{
-		if (!ft_strchr("01NSEW", line[i]))
+		if (!ft_strchr(" 01NSEW", line[i]))
 			return (0);
 		if (line[i] )
 		i++;
@@ -67,6 +134,7 @@ int	 check_map(char **map)
 	i = 0;
 	while (map[i])
 	{
+		change_space_to_wall(map[i], map, i);
 		if (!elements_checker(map[i]))
 			return (0);
 		if (i == 0 || map[i + 1] == NULL)
@@ -74,7 +142,8 @@ int	 check_map(char **map)
 			if (!first_or_last_line(map[i]))
 				return (0);
 		}
-		//change it to flood fill
+		if (!adjacent_to_whitespace(map, i))
+			return (0);
 		if (!surrounded_by_walls(map, i))
 			return (0);
 		i++;
