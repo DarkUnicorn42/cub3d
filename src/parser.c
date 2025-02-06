@@ -1,24 +1,24 @@
 #include "../include/cub3d.h"
 
-static void change_space_to_wall(char *line, char **map, int index)
-{
-	int		i;
-	char	*new;
+// static void change_space_to_wall(char *line, char **map, int index)
+// {
+// 	int		i;
+// 	char	*new;
 
-	i = 0;
-	new = (char *)malloc(ft_strlen(line) + 1);
-	while (line[i])
-	{
-		if (line[i] == ' ')
-			new[i] = '1';
-		else
-			new[i] = line[i];
-		i++;
-	}
-	new[i] = '\0';
-	free(line);
-	map[index] = new;
-}
+// 	i = 0;
+// 	new = (char *)malloc(ft_strlen(line) + 1);
+// 	while (line[i])
+// 	{
+// 		if (line[i] == ' ')
+// 			new[i] = '1';
+// 		else
+// 			new[i] = line[i];
+// 		i++;
+// 	}
+// 	new[i] = '\0';
+// 	free(line);
+// 	map[index] = new;
+// }
 
 // int	surrounded_by_walls(char **map, int i)
 // {
@@ -42,32 +42,73 @@ static void change_space_to_wall(char *line, char **map, int index)
 // 	return (1);
 // }
 
-static int	adjacent_to_whitespace(char **map, int row)
+static bool	is_space_or_one(char back, char front, char up, char down)
 {
-	char	adj_back;
-	char	adj_front;
-	int		col;
+	if (back != '1' && back != ' ')
+		return (false);
+	if (front != '1' && front != ' ')
+		return (false);
+	if (up != '1' && up != ' ')
+		return (false);
+	if (down != '1' && down != ' ')
+		return (false);
+	return (true);
+}
 
-	col = 0;
-	while (map[row][col] == ' ')
-	{
-		col++;
-	}
-	while (map[row][col])
-	{
+static bool is_valid_space(char **map, int row, int col)
+{
+	char adj_back = '\0';
+	char adj_front = '\0';
+	char adj_up = '\0';
+	char adj_down = '\0';
+
+	// Ensure column is within bounds before accessing
+	if (col > 0)
 		adj_back = map[row][col - 1];
+	if (map[row][col + 1] != '\0')  // Avoid reading out of bounds
 		adj_front = map[row][col + 1];
-		if (map[row][col] == ' ')
+
+	// Ensure row is within bounds before accessing
+	if (row > 0 && map[row - 1])
+		adj_up = map[row - 1][col];
+	if (map[row + 1] && map[row + 1][col] != '\0')
+		adj_down = map[row + 1][col];
+
+	// Validate space rules
+	if (map[row][col] == ' ')
+	{
+		if (!is_space_or_one(adj_back, adj_front, adj_up, adj_down))
+			return (false);
+	}
+	return (true);
+}
+
+
+
+static int adjacent_to_whitespace(char **map, int row)
+{
+	int col;
+
+	// Ensure row exists
+	while (map[row] != NULL)  // Check for NULL termination
+	{
+		col = 0;
+		// Skip leading spaces
+		while (map[row][col] == ' ' && map[row][col] != '\0')
+			col++;
+
+		// Validate remaining characters
+		while (map[row][col] != '\0')
 		{
-			if (adj_back != '\0' && adj_back != '1' && adj_back != ' ')
+			if (!is_valid_space(map, row, col))
 				return (0);
-			if (adj_front != '\0' && adj_front != '1' && adj_front != ' ')
-				return (0);
+			col++;
 		}
-		col++;
+		row++;
 	}
 	return (1);
 }
+
 
 static int	 surrounded_by_walls(char **map, int row)
 {
@@ -134,7 +175,7 @@ int	 check_map(char **map)
 	i = 0;
 	while (map[i])
 	{
-		change_space_to_wall(map[i], map, i);
+		// change_space_to_wall(map[i], map, i);
 		if (!elements_checker(map[i]))
 			return (0);
 		if (i == 0 || map[i + 1] == NULL)
