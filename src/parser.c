@@ -1,24 +1,40 @@
 #include "../include/cub3d.h"
 
-// static void change_space_to_wall(char *line, char **map, int index)
+#include <stdlib.h>
+#include <string.h>  // for strlen()
+
+// static void change_space_to_wall(char **map, int index)
 // {
 // 	int		i;
 // 	char	*new;
+// 	char	*line;
 
+// 	line = map[index]; // Get the current line
+// 	if (!line) // Ensure line is valid
+// 		return;
+
+// 	// Allocate memory for the new modified line
+// 	new = (char *)malloc(strlen(line) + 1);
+// 	if (!new) // Check if malloc failed
+// 		return;
+
+// 	// Replace spaces and tabs with '1'
 // 	i = 0;
-// 	new = (char *)malloc(ft_strlen(line) + 1);
 // 	while (line[i])
 // 	{
-// 		if (line[i] == ' ')
+// 		if (line[i] == ' ' || line[i] == '\t')  // Use '\t' instead of '	'
 // 			new[i] = '1';
 // 		else
 // 			new[i] = line[i];
 // 		i++;
 // 	}
 // 	new[i] = '\0';
+
+// 	// Free old line and update the map
 // 	free(line);
-// 	map[index] = new;
+// 	map[index] = new; // Assign the modified string back to the map
 // }
+
 
 // int	surrounded_by_walls(char **map, int i)
 // {
@@ -88,20 +104,22 @@ static bool is_valid_space(char **map, int row, int col)
 static int adjacent_to_whitespace(char **map, int row)
 {
 	int col;
-
+	col = 0;
 	// Ensure row exists
 	while (map[row] != NULL)  // Check for NULL termination
 	{
-		col = 0;
 		// Skip leading spaces
 		while (map[row][col] == ' ' && map[row][col] != '\0')
 			col++;
-
 		// Validate remaining characters
 		while (map[row][col] != '\0')
 		{
-			if (!is_valid_space(map, row, col))
-				return (0);
+			if (map[row][col] == ' ')
+			{
+				printf("here\n");
+				if (!is_valid_space(map, row, col))
+					return (0);
+			}
 			col++;
 		}
 		row++;
@@ -110,39 +128,39 @@ static int adjacent_to_whitespace(char **map, int row)
 }
 
 
-static int	 surrounded_by_walls(char **map, int row)
-{
-	int		col;
+// static int	 surrounded_by_walls(char **map, int row)
+// {
+// 	int		col;
 
-	col = 0;
-	if (row == 0 || map[row + 1] == NULL)
-		return (1);
-	while (map[row][col] == ' ')
-		col++;
-	while (map[row][col])
-	{
-		if ((ft_strlen(map[row]) > ft_strlen(map[row - 1])) && ((size_t)col > ft_strlen(map[row - 1])))
-		{
-			if (map[row][col] != 1)
-				return (0);
-		}
-		if ((ft_strlen(map[row]) > ft_strlen(map[row + 1])) && ((size_t)col > ft_strlen(map[row + 1])) && map[row][col] != '1')
-		{
-			if (map[row][col] != 1)
-				return (0);
-		}
-		col++;
-	}
-	return (1);
+// 	col = 0;
+// 	if (row == 0 || map[row + 1] == NULL)
+// 		return (1);
+// 	while (map[row][col] == ' ')
+// 		col++;
+// 	while (map[row][col])
+// 	{
+// 		if ((ft_strlen(map[row]) > ft_strlen(map[row - 1])) && ((size_t)col > ft_strlen(map[row - 1])))
+// 		{
+// 			if (map[row][col] != 1)
+// 				return (0);
+// 		}
+// 		if ((ft_strlen(map[row]) > ft_strlen(map[row + 1])) && ((size_t)col > ft_strlen(map[row + 1])) && map[row][col] != '1')
+// 		{
+// 			if (map[row][col] != 1)
+// 				return (0);
+// 		}
+// 		col++;
+// 	}
+// 	return (1);
 
-}
+// }
 
 int	first_or_last_line(char *line)
 {
 	int	i;
 
 	i = 0;
-	while(line[i])
+	while (line[i])
 	{
 		if (line[i] != '1' && line[i] != ' ')
 			return (0);
@@ -162,7 +180,7 @@ int	elements_checker(char *line)
 	{
 		if (!ft_strchr(" 01NSEW", line[i]))
 			return (0);
-		if (line[i] )
+		// if (line[i] )
 		i++;
 	}
 	return (1);
@@ -175,7 +193,8 @@ int	 check_map(char **map)
 	i = 0;
 	while (map[i])
 	{
-		// change_space_to_wall(map[i], map, i);
+		// change_space_to_wall(map, i);
+		printf("%s\n", map[i]);
 		if (!elements_checker(map[i]))
 			return (0);
 		if (i == 0 || map[i + 1] == NULL)
@@ -183,10 +202,13 @@ int	 check_map(char **map)
 			if (!first_or_last_line(map[i]))
 				return (0);
 		}
-		if (!adjacent_to_whitespace(map, i))
-			return (0);
-		if (!surrounded_by_walls(map, i))
-			return (0);
+		else
+		{
+			if (!adjacent_to_whitespace(map, i))
+				return (0);
+		}
+		// if (!surrounded_by_walls(map, i))
+			// return (0);
 		i++;
 	}
 	return (1);
