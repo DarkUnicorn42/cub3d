@@ -3,37 +3,37 @@
 #include <stdlib.h>
 #include <string.h>  // for strlen()
 
-// static void change_space_to_wall(char **map, int index)
-// {
-// 	int		i;
-// 	char	*new;
-// 	char	*line;
+static void change_space_to_wall(char **map, int index)
+{
+	int		i;
+	char	*new;
+	char	*line;
 
-// 	line = map[index]; // Get the current line
-// 	if (!line) // Ensure line is valid
-// 		return;
+	line = map[index]; // Get the current line
+	if (!line) // Ensure line is valid
+		return;
 
-// 	// Allocate memory for the new modified line
-// 	new = (char *)malloc(strlen(line) + 1);
-// 	if (!new) // Check if malloc failed
-// 		return;
+	// Allocate memory for the new modified line
+	new = (char *)malloc(strlen(line) + 1);
+	if (!new) // Check if malloc failed
+		return;
 
-// 	// Replace spaces and tabs with '1'
-// 	i = 0;
-// 	while (line[i])
-// 	{
-// 		if (line[i] == ' ' || line[i] == '\t')  // Use '\t' instead of '	'
-// 			new[i] = '1';
-// 		else
-// 			new[i] = line[i];
-// 		i++;
-// 	}
-// 	new[i] = '\0';
+	// Replace spaces and tabs with '1'
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == ' ' || line[i] == '\t')  // Use '\t' instead of '	'
+			new[i] = '1';
+		else
+			new[i] = line[i];
+		i++;
+	}
+	new[i] = '\0';
 
-// 	// Free old line and update the map
-// 	free(line);
-// 	map[index] = new; // Assign the modified string back to the map
-// }
+	// Free old line and update the map
+	free(line);
+	map[index] = new; // Assign the modified string back to the map
+}
 
 
 // int	surrounded_by_walls(char **map, int i)
@@ -116,7 +116,6 @@ static int adjacent_to_whitespace(char **map, int row)
 		{
 			if (map[row][col] == ' ')
 			{
-				printf("here\n");
 				if (!is_valid_space(map, row, col))
 					return (0);
 			}
@@ -193,8 +192,6 @@ int	 check_map(char **map)
 	i = 0;
 	while (map[i])
 	{
-		// change_space_to_wall(map, i);
-		printf("%s\n", map[i]);
 		if (!elements_checker(map[i]))
 			return (0);
 		if (i == 0 || map[i + 1] == NULL)
@@ -207,6 +204,9 @@ int	 check_map(char **map)
 			if (!adjacent_to_whitespace(map, i))
 				return (0);
 		}
+		change_space_to_wall(map, i);
+		printf("%s\n", map[i]);
+
 		// if (!surrounded_by_walls(map, i))
 			// return (0);
 		i++;
