@@ -111,12 +111,12 @@ static int	 surrounded_by_walls(char **map, int row)
 	{
 		if ((ft_strlen(map[row]) > ft_strlen(map[row - 1])) && ((size_t)col > ft_strlen(map[row - 1])))
 		{
-			if (map[row][col] != 1)
+			if (map[row][col] != '1')
 				return (0);
 		}
 		if ((ft_strlen(map[row]) > ft_strlen(map[row + 1])) && ((size_t)col > ft_strlen(map[row + 1])) && map[row][col] != '1')
 		{
-			if (map[row][col] != 1)
+			if (map[row][col] != '1')
 				return (0);
 		}
 		col++;
