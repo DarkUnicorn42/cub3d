@@ -37,9 +37,9 @@ int close_button(t_game *game)
 
 int draw_loop(t_game *game)
 {
-    t_player *player = &game->player;
+    t_player *player;
 
-
+	player = &game->player;
 	move_player(player, game);
     clear_image(game);
 	draw_floor_ceiling(game);
@@ -49,7 +49,6 @@ int draw_loop(t_game *game)
         draw_square(player->x, player->y, 10, 0x00FF00, game);
         draw_map(game);
     }
-
     // Raycasting loop for each column
     float ray_angle = player->angle - (PI / 6); // Start angle
     float angle_increment = (PI / 3) / WIDTH;  // Field of view divided by screen width

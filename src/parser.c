@@ -35,29 +35,6 @@ static void change_space_to_wall(char **map, int index)
 	map[index] = new; // Assign the modified string back to the map
 }
 
-
-// int	surrounded_by_walls(char **map, int i)
-// {
-// 	if (i == 0)
-// 	{
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-// 			return (0);
-// 	}
-// 	else if (map[i + 1] == NULL)
-// 	{
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-// 			return (0);
-// 	}
-// 	else
-// 	{
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i - 1]))) >= 2)
-// 			return (0);
-// 		if ((abs((int)ft_strlen(map[i]) - (int)ft_strlen(map[i + 1]))) >= 2)
-// 			return (0);
-// 	}
-// 	return (1);
-// }
-
 static bool	is_space_or_one(char back, char front, char up, char down)
 {
 	if (back != '1' && back != ' ')
@@ -201,7 +178,7 @@ int	 check_map(char **map)
 		if (!surrounded_by_walls(map, i))
 			return (0);
 		change_space_to_wall(map, i);
-		printf("%s\n", map[i]);
+		// printf("%s\n", map[i]);
 		i++;
 	}
 	return (1);
@@ -350,31 +327,24 @@ int parsing(t_game *data)
                 free(line);
                 continue;
             }
-
             if (!line_check(line, data)) // Process texture lines
             {
                 free(line);
                 return (0);
             }
-
             if (is_map_line(line)) // Map data starts
                 is_map_started = 1;
         }
-
         if (is_map_started) // Create the map
         {
             create_map(line, data);
             break;
         }
-
         free(line);
     }
-
-	find_player_spawn(data, &data->player); // Find the player spawn
-
     if (!check_map(data->map)) // Validate the map
-        return (0);
-
+		return (0);
+	find_player_spawn(data, &data->player); // Find the player spawn
     return (1);
 }
 

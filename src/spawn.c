@@ -5,6 +5,7 @@ void find_player_spawn(t_game *game, t_player *player)
     int y = 0;
     while (game->map[y])
     {
+        printf("%s\n", game->map[y]);
         int x = 0;
         while (game->map[y][x])
         {

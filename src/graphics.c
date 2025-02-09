@@ -25,12 +25,26 @@ void draw_square(int x, int y, int size, int color, t_game *game)
 
 void draw_map(t_game *game)
 {
+    int		y;
+	int		x;
 	char	**map = game->map;
 	int		color = 0x0000FF;
-	for(int y = 0; map[y]; y++)
-		for(int x = 0; map[y][x]; x++)
+
+	y = 0;
+	x = 0;
+	map = game->map;
+	color = 0x0000FF;
+	while (map[y])
+	{
+		x = 0;
+		while (map[y][x])
+		{
 			if(map[y][x] == '1')
 				draw_square(x * BLOCK, y * BLOCK, BLOCK, color, game);
+			x++;
+		}
+		y++;
+	}
 }
 
 void clear_image(t_game *game)
@@ -65,8 +79,9 @@ bool touch(float px, float py, t_game *game)
     {
         for (int mapX = x0; mapX <= x1; mapX++)
         {
-            if (mapY < 0 || mapY >= HEIGHT / BLOCK ||
-                mapX < 0 || mapX >= WIDTH / BLOCK)
+            // if (mapY < 0 || mapY >= HEIGHT / BLOCK ||
+            //     mapX < 0 || mapX >= WIDTH / BLOCK)
+			if (mapY < 0 || game->map[mapY] == NULL || mapX < 0 || game->map[mapY][mapX] == '\0')
             {
                 return (true);
             }
