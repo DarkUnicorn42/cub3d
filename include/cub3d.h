@@ -83,9 +83,6 @@ typedef struct s_line
 	float	wall_height;
 	int		start_y;
 	int		end_y;
-	float	hit_x;
-	float	hit_y;
-	float	wall_hit;
 	int		texture_x;
 }	t_line;
 

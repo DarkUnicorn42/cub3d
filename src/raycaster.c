@@ -103,65 +103,66 @@ float	compute_corrected_dist(t_ray *ray, t_player *player, float ray_angle)
 
 void draw_column(t_game *game, t_texture *texture, int column, t_line *line)
 {
-    float step = (float)texture->height / (float)line->wall_height;
-    float tex_pos = (line->start_y - HEIGHT / 2 + line->wall_height / 2) * step;
+	float	step;
+	float	tex_pos;
+	int		y;
+	int		tex_y;
+	int		color;
 
-    for (int y = line->start_y; y < line->end_y; y++)
-    {
-        int tex_y = (int)tex_pos & (texture->height - 1);
-        tex_pos += step;
+	step = (float)texture->height / (float)line->wall_height;
+	tex_pos = (line->start_y - HEIGHT / 2 + line->wall_height / 2) * step;
+	y = line->start_y;
+	while (y < line->end_y)
+	{
+		tex_y = (int)tex_pos & (texture->height - 1);
+		color = *(int *)(texture->data + (tex_y * texture->size_line + line->texture_x * (texture->bpp / 8)));
+		put_pixel(column, y, color, game);
+		tex_pos += step;
+		y++;
+	}
+}
 
-        int color = *(int *)(texture->data +
-            (tex_y * texture->size_line + line->texture_x * (texture->bpp / 8)));
+void calc_line(t_player *player, t_ray *ray, t_texture *texture, t_line *line)
+{
+	float wall_x;
 
-        put_pixel(column, y, color, game);
-    }
+	line->wall_height = (int)(BLOCK * HEIGHT / line->distance);
+	line->start_y = (HEIGHT - line->wall_height) / 2;
+	line->end_y = line->start_y + line->wall_height;
+	if (line->start_y < 0)
+		line->start_y = 0;
+	if (line->end_y >= HEIGHT)
+		line->end_y = HEIGHT - 1;
+
+	if (ray->side == 0)
+		wall_x = (player->y / BLOCK) + ((line->distance / BLOCK)
+			* ray->raydiry);
+	else
+		wall_x = (player->x / BLOCK) + ((line->distance / BLOCK)
+			* ray->raydirx);
+	wall_x = wall_x - floor(wall_x);
+
+	line->texture_x = (int)(wall_x * texture->width);
+	if (line->texture_x < 0)
+		line->texture_x = 0;
+	if (line->texture_x >= texture->width)
+		line->texture_x = texture->width - 1;
 }
 
 void draw_line(t_player *player, t_game *game, float ray_angle, int column)
 {
-    t_ray       ray;
-    t_line      line;
-    t_texture   *texture;
-    float       wall_x;
-
-    // Initialize ray and perform DDA
-    init_ray(&ray, player, ray_angle);
-    calc_delta_dist(&ray);
-    init_sidedist_step(&ray, player);
-    perform_dda(&ray, game);
-
-    // Compute perpendicular wall distance (avoiding fisheye effect)
-    line.distance = compute_corrected_dist(&ray, player, ray_angle);
-
-    // Compute wall height based on corrected distance
-    line.wall_height = (int)(BLOCK * HEIGHT / line.distance);
-
-    line.start_y = (HEIGHT - line.wall_height) / 2;
-    line.end_y = line.start_y + line.wall_height;
-    if (line.start_y < 0)
-        line.start_y = 0;
-    if (line.end_y >= HEIGHT)
-		line.end_y = HEIGHT - 1;
-
-    // Compute wall hit X coordinate (used for texture mapping)
-    if (ray.side == 0)
-        wall_x = (player->y / BLOCK) + ((line.distance / BLOCK) * ray.raydiry);
-    else
-        wall_x = (player->x / BLOCK) + ((line.distance / BLOCK) * ray.raydirx);
-    wall_x = wall_x - floor(wall_x); // Extract the fractional part
-
-    // Choose correct texture
+	t_ray     ray;
+	t_line    line;
+	t_texture *texture;
+	
+	init_ray(&ray, player, ray_angle);
+	calc_delta_dist(&ray);
+	init_sidedist_step(&ray, player);
+	perform_dda(&ray, game);
 	texture = choose_texture(&ray, game);
 	if (!texture || !texture->data)
 		return;
-
-	line.texture_x = (int)(wall_x * texture->width);
-	if (line.texture_x < 0)
-		line.texture_x = 0;
-	if (line.texture_x >= texture->width)
-		line.texture_x = texture->width - 1;
-
-    // Draw column with fixed scaling
-    draw_column(game, texture, column, &line);
+	line.distance = compute_corrected_dist(&ray, player, ray_angle);
+	calc_line(player, &ray, texture, &line);
+	draw_column(game, texture, column, &line);
 }
