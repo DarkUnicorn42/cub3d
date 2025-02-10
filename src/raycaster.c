@@ -101,65 +101,67 @@ float	compute_corrected_dist(t_ray *ray, t_player *player, float ray_angle)
 	return (distance_in_pixels);
 }
 
-void	draw_column(t_game *game, t_texture *texture,
-				int column, t_line *line)
+void draw_column(t_game *game, t_texture *texture, int column, t_line *line)
 {
-	int	y;
-	int	d;
-	int	color;
-	int	height;
+    float step = (float)texture->height / (float)line->wall_height;
+    float tex_pos = (line->start_y - HEIGHT / 2 + line->wall_height / 2) * step;
 
-	height = line->end_y - line->start_y;
-	y = line->start_y;
-	while (y < line->end_y)
-	{
-		d = (y - line->start_y) * texture->height / height;
-		color = *(int *)(texture->data
-			+ (d * texture->size_line + line->texture_x * (texture->bpp / 8)));
-		put_pixel(column, y, color, game);
-		y++;
-	}
+    for (int y = line->start_y; y < line->end_y; y++)
+    {
+        int tex_y = (int)tex_pos & (texture->height - 1);
+        tex_pos += step;
+
+        int color = *(int *)(texture->data +
+            (tex_y * texture->size_line + line->texture_x * (texture->bpp / 8)));
+
+        put_pixel(column, y, color, game);
+    }
 }
 
-void	draw_line(t_player *player, t_game *game, float ray_angle, int column)
+void draw_line(t_player *player, t_game *game, float ray_angle, int column)
 {
-	t_ray		ray;
-	t_line		line;
-	t_texture	*texture;
+    t_ray       ray;
+    t_line      line;
+    t_texture   *texture;
+    float       wall_x;
 
-	init_ray(&ray, player, ray_angle);
-	calc_delta_dist(&ray);
-	init_sidedist_step(&ray, player);
-	perform_dda(&ray, game);
+    // Initialize ray and perform DDA
+    init_ray(&ray, player, ray_angle);
+    calc_delta_dist(&ray);
+    init_sidedist_step(&ray, player);
+    perform_dda(&ray, game);
 
-	// Compute distance
-	line.distance = compute_corrected_dist(&ray, player, ray_angle);
+    // Compute perpendicular wall distance (avoiding fisheye effect)
+    line.distance = compute_corrected_dist(&ray, player, ray_angle);
 
-	// Pick the texture
-	texture = choose_texture(&ray, game);
-	if (!texture || !texture->data)
-		return ;
+    // Compute wall height based on corrected distance
+    line.wall_height = (int)(BLOCK * HEIGHT / line.distance);
 
-	// Compute wall height / startY / endY
-	line.wall_height = (BLOCK / line.distance) * (WIDTH / 2.0f);
-	line.start_y = (HEIGHT - line.wall_height) / 2;
-	line.end_y = line.start_y + line.wall_height;
-	if (line.start_y < 0)
-		line.start_y = 0;
-	if (line.end_y >= HEIGHT)
+    line.start_y = (HEIGHT - line.wall_height) / 2;
+    line.end_y = line.start_y + line.wall_height;
+    if (line.start_y < 0)
+        line.start_y = 0;
+    if (line.end_y >= HEIGHT)
 		line.end_y = HEIGHT - 1;
 
-	// Compute intersection point
-	line.hit_x = player->x + ray.raydirx * line.distance;
-	line.hit_y = player->y + ray.raydiry * line.distance;
+    // Compute wall hit X coordinate (used for texture mapping)
+    if (ray.side == 0)
+        wall_x = (player->y / BLOCK) + ((line.distance / BLOCK) * ray.raydiry);
+    else
+        wall_x = (player->x / BLOCK) + ((line.distance / BLOCK) * ray.raydirx);
+    wall_x = wall_x - floor(wall_x); // Extract the fractional part
 
-	// Figure out local offset in the tile
-	if (ray.side == 0)
-		line.wall_hit = fmodf(line.hit_y, BLOCK);
-	else
-		line.wall_hit = fmodf(line.hit_x, BLOCK);
+    // Choose correct texture
+	texture = choose_texture(&ray, game);
+	if (!texture || !texture->data)
+		return;
 
-	line.texture_x = (int)((line.wall_hit / (float)BLOCK) * texture->width);
+	line.texture_x = (int)(wall_x * texture->width);
+	if (line.texture_x < 0)
+		line.texture_x = 0;
+	if (line.texture_x >= texture->width)
+		line.texture_x = texture->width - 1;
 
-	draw_column(game, texture, column, &line);
+    // Draw column with fixed scaling
+    draw_column(game, texture, column, &line);
 }
