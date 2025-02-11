@@ -105,6 +105,10 @@ typedef struct s_game
     char        *south_texture_path;
     char        *west_texture_path;
     char        *east_texture_path;
+	int			n_path;
+	int			s_path;
+	int			w_path;
+	int			e_path;
 	char 		**map;
 	char		**copy_map;
 
@@ -161,6 +165,7 @@ int		parsing(t_game *data);
 int		elements_checker(char *line);
 int		parse_color(char *str);
 void	free_split(char **arr);
+int		valid_data(t_game *data);
 
 // spawn
 

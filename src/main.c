@@ -8,6 +8,8 @@ int	init_game(t_game *game, char *file)
 	game->fd = open(file, O_RDONLY);
 	if (!parsing(game))
 		return (error(INVALID_MAP, game));
+	if (!valid_data(game))
+		return (error(INVALID_FILE, game));
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3d");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
@@ -123,6 +125,10 @@ int	main(int argc, char **argv)
 
 	if (argc != 2)
 		return (error(NO_FILE, &game));
+	game.s_path = 0;
+	game.n_path = 0;
+	game.e_path = 0;
+	game.w_path = 0;
 	if (!init_game(&game, argv[1]))
 		return (0);
 	mlx_hook(game.win, 2, 1L<<0, key_press, &game);

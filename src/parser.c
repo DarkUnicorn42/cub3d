@@ -203,23 +203,48 @@ int	create_map(char *line, t_game *data)
 	return (1);
 }
 
-int texture_identifier(int code, char *line, t_game *game)
+static void	path_counter(int code, t_game *data)
 {
-    int i = 2; // Skip the identifier (e.g., "NO")
+	if (code == 1)
+		data->n_path++;
+	else if (code == 2)
+		data->s_path++;
+	else if (code == 3)
+		data->w_path++;
+	else if (code == 4)
+		data->e_path++;
+	else
+		return ;
+}
+
+static char	*tex_path_creator(char *line)
+{
+	int i;
+
+	i = 2;
     while (line[i] == ' ')
         i++;
 
     char *path = ft_substr(line, i, ft_strlen(line) - i);
     if (!path)
-        return (0);
-
-    // Strip trailing newline or spaces in the texture path
+        return (NULL);
     int len = ft_strlen(path);
     while (len > 0 && (path[len - 1] == '\n' || path[len - 1] == ' '))
     {
         path[len - 1] = '\0';
         len--;
     }
+	return (path);
+}
+
+int texture_identifier(int code, char *line, t_game *game)
+{
+	char	*path;
+
+	path = tex_path_creator(line);
+	path_counter(code, game);
+	if (!path)
+		return (0);
     if (code == 1)
         game->north_texture_path = path;
     else if (code == 2)
@@ -228,7 +253,6 @@ int texture_identifier(int code, char *line, t_game *game)
         game->west_texture_path = path;
     else if (code == 4)
         game->east_texture_path = path;
-
     return (1);
 }
 
@@ -312,6 +336,23 @@ static int	is_map_line(char *line)
 	}
 	return (1);
 }
+int	valid_data(t_game *data)
+{
+	if (data->n_path != 1 || data->s_path != 1 || data->w_path != 1 || data->e_path != 1)
+		{
+				printf("%d\n", data->w_path);
+				printf("%d\n", data->e_path);
+				printf("%d\n", data->s_path);
+				printf("%d\n", data->n_path);
+
+				return (0);
+
+		}
+		// if (!check_map(data->map)) // Validate the map
+		// return (0);
+	find_player_spawn(data, &data->player); // Find the player spawn
+	return (1);
+}
 
 int parsing(t_game *data)
 {
@@ -342,9 +383,9 @@ int parsing(t_game *data)
         }
         free(line);
     }
-    if (!check_map(data->map)) // Validate the map
+	if (!check_map(data->map)) // Validate the map
 		return (0);
-	find_player_spawn(data, &data->player); // Find the player spawn
+	find_player_spawn(data, &data->player);
     return (1);
 }
 
