@@ -124,6 +124,7 @@ typedef enum	s_error
 
 int	close_game(t_game *game);
 int close_button(t_game *game);
+void free_map(char **map);
 
 // player
 
@@ -131,7 +132,7 @@ void	init_player(t_player *player);
 int		key_press(int keycode, t_game *game);
 int		key_release(int keycode, t_player *player);
 void move_player(t_player *player, t_game *game);
-int		error(t_error code);
+int		error(t_error code, t_game *game);
 
 // graphics
 

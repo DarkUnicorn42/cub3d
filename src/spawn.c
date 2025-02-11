@@ -17,7 +17,7 @@ void find_player_spawn(t_game *game, t_player *player)
         }
         y++;
     }
-    error(INVALID_SPAWN);
+    error(INVALID_SPAWN, game);
     exit(1);
 }
 

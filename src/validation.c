@@ -4,7 +4,7 @@ int	validation(t_game *data, char *file)
 {
 	(void)data;
 	if (!map_file_validation(file))
-		return (error(INVALID_FILE));
+		return (error(INVALID_FILE, data));
 	return (1);
 }
 

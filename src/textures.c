@@ -12,13 +12,13 @@ int load_texture(t_game *game, t_texture *texture, char *path)
 int load_all_textures(t_game *game)
 {
     if (!load_texture(game, &game->north_texture, game->north_texture_path))
-        return (error(INVALID_FILE));
+        return (error(INVALID_FILE, game));
     if (!load_texture(game, &game->south_texture, game->south_texture_path))
-        return (error(INVALID_FILE));
+        return (error(INVALID_FILE, game));
     if (!load_texture(game, &game->west_texture, game->west_texture_path))
-        return (error(INVALID_FILE));
+        return (error(INVALID_FILE, game));
     if (!load_texture(game, &game->east_texture, game->east_texture_path))
-        return (error(INVALID_FILE));
+        return (error(INVALID_FILE, game));
     return (1);
 }
 
