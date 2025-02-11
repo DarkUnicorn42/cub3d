@@ -1,7 +1,8 @@
 # Variables
 NAME = cub3d
 CC = clang
-CFLAGS = -Wall -Wextra -Werror -g -I./includes
+#CFLAGS = -Wall -Wextra -Werror -g -I./includes
+CFLAGS = -Wall -Wextra -Werror
 
 MLX_DIR = include/mlx
 LIBFT_DIR = include/libft

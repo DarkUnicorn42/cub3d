@@ -22,6 +22,20 @@ int load_all_textures(t_game *game)
     return (1);
 }
 
+void free_texture(t_game *game, t_texture *texture)
+{
+    if (texture->img)
+        mlx_destroy_image(game->mlx, texture->img);
+}
+
+void free_all_textures(t_game *game)
+{
+    free_texture(game, &game->north_texture);
+    free_texture(game, &game->south_texture);
+    free_texture(game, &game->west_texture);
+    free_texture(game, &game->east_texture);
+}
+
 void free_texture_paths(t_game *game)
 {
     free(game->north_texture_path);

@@ -149,6 +149,8 @@ int load_texture(t_game *game, t_texture *texture, char *path);
 int load_all_textures(t_game *game);
 void free_texture_paths(t_game *game);
 t_texture	*choose_texture(t_ray *ray, t_game *game);
+void free_texture(t_game *game, t_texture *texture);
+void free_all_textures(t_game *game);
 
 // parser
 
@@ -174,7 +176,6 @@ void	perform_dda(t_ray *ray, t_game *game);
 float	compute_corrected_dist(t_ray *ray, t_player *player, float ray_angle);
 void	draw_column(t_game *game, t_texture *texture, int column, t_line *line);
 void	draw_line(t_player *player, t_game *game, float ray_angle, int column);
-float get_wallx(t_ray *ray, t_game *game);
 
 // get_next_line
 

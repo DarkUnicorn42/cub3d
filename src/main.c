@@ -13,14 +13,30 @@ int	init_game(t_game *game, char *file)
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
 	if (!load_all_textures(game))
-        return (error(INVALID_FILE));
+		return (error(INVALID_FILE));
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 	return (1);
+}
+
+void free_map(char **map)
+{
+	int i = 0;
+	if (!map)
+		return;
+	while (map[i])
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
 }
 
 int	close_game(t_game *game)
 {
 	free_texture_paths(game);
+	free_all_textures(game);
+	free_map(game->map);
+	free_map(game->copy_map);
 	mlx_destroy_image(game->mlx, game->img);
 	mlx_destroy_window(game->mlx, game->win);
 	mlx_destroy_display(game->mlx);
@@ -30,37 +46,40 @@ int	close_game(t_game *game)
 
 int close_button(t_game *game)
 {
-    close_game(game);
-    exit(0);
-    return (0);
+	close_game(game);
+	exit(0);
+	return (0);
 }
 
 int draw_loop(t_game *game)
 {
-    t_player *player;
+	t_player *player;
+	float ray_angle;
+	float angle_increment;
+	int column;
 
 	player = &game->player;
 	move_player(player, game);
-    clear_image(game);
+	clear_image(game);
 	draw_floor_ceiling(game);
-    // Debug: Render the 2D map and player position
-    if (DEBUG)
-    {
-        draw_square(player->x, player->y, 10, 0x00FF00, game);
-        draw_map(game);
-    }
-    // Raycasting loop for each column
-    float ray_angle = player->angle - (PI / 6); // Start angle
-    float angle_increment = (PI / 3) / WIDTH;  // Field of view divided by screen width
-
-    for (int column = 0; column < WIDTH; column++)
-    {
-        draw_line(player, game, ray_angle, column);
-        ray_angle += angle_increment;
-    }
-
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-    return (0);
+	// Debug: Render the 2D map and player position
+	if (DEBUG)
+	{
+		draw_square(player->x, player->y, 10, 0x00FF00, game);
+		draw_map(game);
+	}
+	// Raycasting loop for each column
+	ray_angle = player->angle - (PI / 6); // Start angle
+	angle_increment = (PI / 3) / WIDTH;  // Field of view divided by screen width
+	column = 0;
+	while (column < WIDTH)
+	{
+		draw_line(player, game, ray_angle, column);
+		ray_angle += angle_increment;
+		column++;
+	}
+	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	return (0);
 }
 
 int	main(int argc, char **argv)
