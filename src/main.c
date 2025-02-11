@@ -1,7 +1,33 @@
 #include "../include/cub3d.h"
 
+void init_game_struct(t_game *game)
+{
+    game->mlx = NULL;
+    game->win = NULL;
+    game->img = NULL;
+    game->data = NULL;
+    game->map = NULL;
+    game->copy_map = NULL;
+    // game->north_texture_path = NULL;
+    // game->south_texture_path = NULL;
+    // game->west_texture_path = NULL;
+    // game->east_texture_path = NULL;
+    // game->north_texture.img = NULL;
+    // game->south_texture.img = NULL;
+    // game->west_texture.img = NULL;
+    // game->east_texture.img = NULL;
+    // game->floor_color = 0;
+    // game->ceiling_color = 0;
+    // game->n_path = 0;
+    // game->s_path = 0;
+    // game->w_path = 0;
+    // game->e_path = 0;
+}
+
 int	init_game(t_game *game, char *file)
 {
+	init_game_struct(game);
+
 	if (!validation(game, file))
 		return (0);
 	init_player(&game->player);
