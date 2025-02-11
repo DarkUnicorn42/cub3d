@@ -3,6 +3,7 @@
 int	validation(t_game *data, char *file)
 {
 	(void)data;
+
 	if (!map_file_validation(file))
 		return (error(INVALID_FILE));
 	return (1);
