@@ -76,8 +76,6 @@ static bool is_valid_space(char **map, int row, int col)
 	return (true);
 }
 
-
-
 static int adjacent_to_whitespace(char **map, int row)
 {
 	int col;
@@ -96,7 +94,6 @@ static int adjacent_to_whitespace(char **map, int row)
 	}
 	return (1);
 }
-
 
 static int	 surrounded_by_walls(char **map, int row)
 {

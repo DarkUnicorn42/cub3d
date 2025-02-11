@@ -24,6 +24,8 @@ int error(t_error code, t_game *game)
 		{
 			free_map(game->map);
 			free_map(game->copy_map);
+			//free_all_textures(game);
+			free_texture_paths(game);
 			printf("invalid map - make sure that it's enclosed in walls\n");
 		}
 	}
