@@ -51,26 +51,49 @@ int close_button(t_game *game)
 	return (0);
 }
 
+void draw_minimap(t_game *game)
+{
+	int		map_x;
+	int		map_y;
+	int		block_size = 8;
+	int		color;
+
+	map_y = 0;
+	while (game->map[map_y])
+	{
+		map_x = 0;
+		while (game->map[map_y][map_x])
+		{
+			if (game->map[map_y][map_x] == '1')
+				color = 0xFFFFFF;
+			else if (ft_strchr("0NSEW", game->map[map_y][map_x]))
+				color = 0x000000;
+			else
+			{
+				map_x++;
+				continue;
+			}
+			draw_square(map_x * block_size, map_y * block_size, block_size, color, game);
+			map_x++;
+		}
+		map_y++;
+	}
+	draw_square(game->player.x / BLOCK * block_size, game->player.y / BLOCK * block_size, block_size / 2, 0x00FF00, game);
+}
+
 int draw_loop(t_game *game)
 {
-	t_player *player;
-	float ray_angle;
-	float angle_increment;
-	int column;
+	t_player	*player;
+	float		ray_angle;
+	float		angle_increment;
+	int			column;
 
 	player = &game->player;
 	move_player(player, game);
 	clear_image(game);
 	draw_floor_ceiling(game);
-	// Debug: Render the 2D map and player position
-	if (DEBUG)
-	{
-		draw_square(player->x, player->y, 10, 0x00FF00, game);
-		draw_map(game);
-	}
-	// Raycasting loop for each column
-	ray_angle = player->angle - (PI / 6); // Start angle
-	angle_increment = (PI / 3) / WIDTH;  // Field of view divided by screen width
+	ray_angle = player->angle - (PI / 6);
+	angle_increment = (PI / 3) / WIDTH;
 	column = 0;
 	while (column < WIDTH)
 	{
@@ -78,6 +101,7 @@ int draw_loop(t_game *game)
 		ray_angle += angle_increment;
 		column++;
 	}
+	draw_minimap(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 	return (0);
 }

@@ -13,14 +13,13 @@ void	put_pixel(int x, int y, int color, t_game *game)
 
 void draw_square(int x, int y, int size, int color, t_game *game)
 {
-	for(int i = 0; i < size; i++)
-		put_pixel(x + i, y, color, game);
-	for(int i = 0; i < size; i++)
-		put_pixel(x, y + i, color, game);
-	for(int i = 0; i < size; i++)
-		put_pixel(x + size, y + i, color, game);
-	for(int i = 0; i < size; i++)
-		put_pixel(x + i, y + size, color, game);
+	for (int i = 0; i < size; i++)
+		{
+	for (int j = 0; j < size; j++)
+		{
+		put_pixel(x + i, y + j, color, game);
+}
+    }
 }
 
 void draw_map(t_game *game)
