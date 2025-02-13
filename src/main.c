@@ -8,10 +8,10 @@ void init_game_struct(t_game *game)
     game->data = NULL;
     game->map = NULL;
     game->copy_map = NULL;
-    // game->north_texture_path = NULL;
-    // game->south_texture_path = NULL;
-    // game->west_texture_path = NULL;
-    // game->east_texture_path = NULL;
+    game->north_texture_path = NULL;
+    game->south_texture_path = NULL;
+    game->west_texture_path = NULL;
+    game->east_texture_path = NULL;
     // game->north_texture.img = NULL;
     // game->south_texture.img = NULL;
     // game->west_texture.img = NULL;
@@ -35,7 +35,7 @@ int	init_game(t_game *game, char *file)
 	if (!parsing(game))
 		return (error(INVALID_MAP, game));
 	if (!valid_data(game))
-		return (error(INVALID_FILE, game));
+		return (error(INVALID_MAP, game));
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3d");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);

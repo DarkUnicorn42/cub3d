@@ -10,7 +10,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 MLX = $(MLX_DIR)/libmlx.a
 LFLAGS = -L$(MLX_DIR) -lmlx -L$(LIBFT_DIR) -lft -lXext -lX11 -lm -lz
 
-SRC = src/main.c src/player.c src/error.c src/graphics.c src/parser.c src/raycaster.c src/spawn.c src/textures.c src/validation.c src/gnl/get_next_line.c src/gnl/get_next_line_utils.c
+SRC = src/main.c src/player.c src/error.c src/graphics.c src/map_utils.c src/parser.c src/map_parser.c src/parser_utils.c src/raycaster.c src/spawn.c src/textures.c src/validation.c src/gnl/get_next_line.c src/gnl/get_next_line_utils.c
 
 OBJ = $(SRC:.c=.o)
 

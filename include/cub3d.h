@@ -123,7 +123,8 @@ typedef enum	s_error
 	NO_FILE,
 	INVALID_FILE,
 	INVALID_SPAWN,
-	INVALID_MAP
+	INVALID_MAP,
+	INVALID_INPUT
 }	t_error;
 
 int	close_game(t_game *game);
@@ -166,6 +167,19 @@ int		elements_checker(char *line);
 int		parse_color(char *str);
 void	free_split(char **arr);
 int		valid_data(t_game *data);
+void	change_space_to_wall(char **map, int index);
+bool	is_space_or_one(char back, char front, char up, char down);
+bool	is_valid_space(char **map, int row, int col);
+int		adjacent_to_whitespace(char **map, int row);
+int		surrounded_by_walls(char **map, int row);
+void	path_counter(int code, t_game *data);
+int		create_map(char *line, t_game *data);
+int		check_map(char **map);
+int		first_or_last_line(char *line);
+char	*tex_path_creator(char *line);
+int		texture_identifier(int code, char *line, t_game *game);
+int		line_check(char *line, t_game *data);
+void	free_split(char **arr);
 
 // spawn
 
