@@ -1,27 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/15 11:19:09 by mwojtcza          #+#    #+#             */
+/*   Updated: 2025/02/15 11:20:21 by mwojtcza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
-void init_game_struct(t_game *game)
+void	init_game_struct(t_game *game)
 {
-    game->mlx = NULL;
-    game->win = NULL;
-    game->img = NULL;
-    game->data = NULL;
-    game->map = NULL;
-    game->copy_map = NULL;
-    game->north_texture_path = NULL;
-    game->south_texture_path = NULL;
-    game->west_texture_path = NULL;
-    game->east_texture_path = NULL;
-    // game->north_texture.img = NULL;
-    // game->south_texture.img = NULL;
-    // game->west_texture.img = NULL;
-    // game->east_texture.img = NULL;
-    // game->floor_color = 0;
-    // game->ceiling_color = 0;
-    // game->n_path = 0;
-    // game->s_path = 0;
-    // game->w_path = 0;
-    // game->e_path = 0;
+	game->mlx = NULL;
+	game->win = NULL;
+	game->img = NULL;
+	game->data = NULL;
+	game->map = NULL;
+	game->copy_map = NULL;
+	game->north_texture_path = NULL;
+	game->south_texture_path = NULL;
+	game->west_texture_path = NULL;
+	game->east_texture_path = NULL;
 }
 
 int	init_game(t_game *game, char *file)
@@ -49,11 +51,13 @@ int	init_game(t_game *game, char *file)
 	return (1);
 }
 
-void free_map(char **map)
+void	free_map(char **map)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	if (!map)
-		return;
+		return ;
 	while (map[i])
 	{
 		free(map[i]);
@@ -83,18 +87,17 @@ int	close_game(t_game *game)
 	return (1);
 }
 
-int close_button(t_game *game)
+int	close_button(t_game *game)
 {
 	close_game(game);
 	exit(0);
 	return (0);
 }
 
-void draw_minimap(t_game *game)
+void	draw_minimap(t_game *game)
 {
 	int		map_x;
 	int		map_y;
-	int		block_size = 8;
 	int		color;
 
 	map_y = 0;
@@ -110,17 +113,17 @@ void draw_minimap(t_game *game)
 			else
 			{
 				map_x++;
-				continue;
+				continue ;
 			}
-			draw_square(map_x * block_size, map_y * block_size, block_size, color, game);
+			draw_sq_mm(map_x, map_y, color, game);
 			map_x++;
 		}
 		map_y++;
 	}
-	draw_square(game->player.x / BLOCK * block_size, game->player.y / BLOCK * block_size, block_size / 2, 0x00FF00, game);
+	draw_sq_mm(game->player.x / BLOCK, game->player.y / BLOCK, 0x00FF00, game);
 }
 
-int draw_loop(t_game *game)
+int	draw_loop(t_game *game)
 {
 	t_player	*player;
 	float		ray_angle;
@@ -147,7 +150,7 @@ int draw_loop(t_game *game)
 
 int	main(int argc, char **argv)
 {
-	t_game game;
+	t_game	game;
 
 	if (argc != 2)
 		return (error(NO_FILE, &game));
@@ -157,8 +160,8 @@ int	main(int argc, char **argv)
 	game.w_path = 0;
 	if (!init_game(&game, argv[1]))
 		return (0);
-	mlx_hook(game.win, 2, 1L<<0, key_press, &game);
-	mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
+	mlx_hook(game.win, 2, 1L << 0, key_press, &game);
+	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
 	mlx_hook(game.win, 17, 0, close_button, &game);
 	mlx_loop_hook(game.mlx, draw_loop, &game);
 

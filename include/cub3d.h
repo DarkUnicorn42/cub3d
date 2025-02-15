@@ -142,7 +142,8 @@ int		error(t_error code, t_game *game);
 // graphics
 
 void	put_pixel(int x, int y, int color, t_game *game);
-void draw_square(int x, int y, int size, int color, t_game *game);
+void draw_square(int x, int y, int color, t_game *game);
+void	draw_sq_mm(int x, int y, int color, t_game *game);
 void draw_map(t_game *game);
 void clear_image(t_game *game);
 bool	touch(float px, float py, t_game *game);

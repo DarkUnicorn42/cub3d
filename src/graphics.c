@@ -1,33 +1,76 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   graphics.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/15 10:49:04 by mwojtcza          #+#    #+#             */
+/*   Updated: 2025/02/15 11:20:25 by mwojtcza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
 void	put_pixel(int x, int y, int color, t_game *game)
 {
-	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
-		return;
+	int	index;
 
-	int index = y * game->size_line + x * game->bpp / 8;
+	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
+		return ;
+	index = y * game->size_line + x * game->bpp / 8;
 	game->data[index] = color & 0xFF;
 	game->data[index + 1] = (color >> 8) & 0xFF;
 	game->data[index + 2] = (color >> 16) & 0xFF;
 }
 
-void draw_square(int x, int y, int size, int color, t_game *game)
+void	draw_square(int x, int y, int color, t_game *game)
 {
-	for (int i = 0; i < size; i++)
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < BLOCK)
+	{
+		j = 0;
+		while (j < BLOCK)
 		{
-	for (int j = 0; j < size; j++)
-		{
-		put_pixel(x + i, y + j, color, game);
-}
-    }
+			put_pixel(x + i, y + j, color, game);
+			j++;
+		}
+		i++;
+	}
 }
 
-void draw_map(t_game *game)
+void	draw_sq_mm(int x, int y, int color, t_game *game)
 {
-    int		y;
+	int	i;
+	int	j;
+	int	block_size;
+
+	block_size = 8;
+	x *= block_size;
+	y *= block_size;
+	i = 0;
+	while (i < block_size)
+	{
+		j = 0;
+		while (j < block_size)
+		{
+			put_pixel(x + i, y + j, color, game);
+			j++;
+		}
+		i++;
+	}
+}
+
+void	draw_map(t_game *game)
+{
+	int		y;
 	int		x;
-	char	**map = game->map;
-	int		color = 0x0000FF;
+	int		color;
+	char	**map;
+
 
 	y = 0;
 	x = 0;
@@ -38,72 +81,82 @@ void draw_map(t_game *game)
 		x = 0;
 		while (map[y][x])
 		{
-			if(map[y][x] == '1')
-				draw_square(x * BLOCK, y * BLOCK, BLOCK, color, game);
+			if (map[y][x] == '1')
+				draw_square(x * BLOCK, y * BLOCK, color, game);
 			x++;
 		}
 		y++;
 	}
 }
 
-void clear_image(t_game *game)
+void	clear_image(t_game *game)
 {
-	for(int y = 0; y < HEIGHT; y++)
-		for(int x = 0; x < WIDTH; x++)
+	int	x;
+	int	y;
+
+	y = 0;
+	while (y < HEIGHT)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
 			put_pixel(x, y, 0, game);
+			x++;
+		}
+		y++;
+	}
 }
 
-// bool touch(float px, float py, t_game *game)
-// {
-//     int x = (int)(px / BLOCK);
-//     int y = (int)(py / BLOCK);
-
-//     // Check if the position is in bounds
-//     if (y < 0 || y >= HEIGHT / BLOCK || x < 0 || x >= WIDTH / BLOCK)
-//         return true; // Out of bounds
-
-//     if (game->map[y][x] == '1')
-//         return true; // Wall collision
-//     return false;
-// }
-
-bool touch(float px, float py, t_game *game)
+bool	touch(float px, float py, t_game *game)
 {
-    int x0 = (int)((px - COLLISION_RADIUS) / BLOCK);
-    int x1 = (int)((px + COLLISION_RADIUS) / BLOCK);
-    int y0 = (int)((py - COLLISION_RADIUS) / BLOCK);
-    int y1 = (int)((py + COLLISION_RADIUS) / BLOCK);
+	int	x1;
+	int	y1;
+	int	mapx;
+	int	mapy;
 
-    for (int mapY = y0; mapY <= y1; mapY++)
-    {
-        for (int mapX = x0; mapX <= x1; mapX++)
-        {
-            // if (mapY < 0 || mapY >= HEIGHT / BLOCK ||
-            //     mapX < 0 || mapX >= WIDTH / BLOCK)
-			if (mapY < 0 || game->map[mapY] == NULL || mapX < 0 || game->map[mapY][mapX] == '\0')
-            {
-                return (true);
-            }
-            if (game->map[mapY][mapX] == '1')
-                return (true);
-        }
-    }
-    return (false);
+	x1 = (int)((px + COLLISION_RADIUS) / BLOCK);
+	y1 = (int)((py + COLLISION_RADIUS) / BLOCK);
+	mapy = (int)((py - COLLISION_RADIUS) / BLOCK);
+	while (mapy <= y1)
+	{
+		mapx = (int)((px - COLLISION_RADIUS) / BLOCK);
+		while (mapx <= x1)
+		{
+			if (mapy < 0 || game->map[mapy] == NULL || mapx < 0
+				|| game->map[mapy][mapx] == '\0'
+				|| game->map[mapy][mapx] == '1')
+				return (true);
+			mapx++;
+		}
+		mapy++;
+	}
+	return (false);
 }
 
-void draw_floor_ceiling(t_game *game)
+void	draw_floor_ceiling(t_game *game)
 {
-    int		x;
-	int		y;
+	int	x;
+	int	y;	
 
-    for (y = 0; y < HEIGHT / 2; y++)
-    {
-        for (x = 0; x < WIDTH; x++)
-            put_pixel(x, y, game->ceiling_color, game);
-    }
-    for (; y < HEIGHT; y++)
-    {
-        for (x = 0; x < WIDTH; x++)
-            put_pixel(x, y, game->floor_color, game);
-    }
+	y = 0;
+	while (y < HEIGHT / 2)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
+			put_pixel(x, y, game->ceiling_color, game);
+			x++;
+		}
+		y++;
+	}
+	while (y < HEIGHT)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
+			put_pixel(x, y, game->floor_color, game);
+			x++;
+		}
+		y++;
+	}
 }
