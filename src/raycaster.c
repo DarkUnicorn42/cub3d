@@ -1,61 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycaster.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/15 11:59:33 by mwojtcza          #+#    #+#             */
+/*   Updated: 2025/02/15 12:20:21 by mwojtcza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
-void	init_ray(t_ray *ray, t_player *player, float ray_angle)
-{
-	ray->raydirx = cosf(ray_angle);
-	ray->raydiry = sinf(ray_angle);
-
-	ray->mapx = (int)(player->x / BLOCK);
-	ray->mapy = (int)(player->y / BLOCK);
-}
-
-void	calc_delta_dist(t_ray *ray)
-{
-	if (ray->raydirx == 0)
-		ray->deltadistx = 1e30f;
-	else
-		ray->deltadistx = fabsf(1.0f / ray->raydirx);
-
-	if (ray->raydiry == 0)
-		ray->deltadisty = 1e30f;
-	else
-		ray->deltadisty = fabsf(1.0f / ray->raydiry);
-}
-
-void	init_sidedist_step(t_ray *ray, t_player *player)
-{
-	if (ray->raydirx < 0)
-	{
-		ray->stepx = -1;
-		ray->sidedistx = ((player->x / BLOCK) - ray->mapx)
-							* ray->deltadistx;
-	}
-	else
-	{
-		ray->stepx = 1;
-		ray->sidedistx = ((ray->mapx + 1) - (player->x / BLOCK))
-							* ray->deltadistx;
-	}
-	if (ray->raydiry < 0)
-	{
-		ray->stepy = -1;
-		ray->sidedisty = ((player->y / BLOCK) - ray->mapy)
-							* ray->deltadisty;
-	}
-	else
-	{
-		ray->stepy = 1;
-		ray->sidedisty = ((ray->mapy + 1) - (player->y / BLOCK))
-							* ray->deltadisty;
-	}
-}
-	/*
-	** perform_dda:
-	**  - Steps through the grid in increments of 1 tile, either in X or Y,
-	**    until we hit a wall ('1').
-	**  - Sets ray->side = 0 if we moved in X (vertical boundary),
-	**    or 1 if we moved in Y (horizontal boundary).
-	*/
 void	perform_dda(t_ray *ray, t_game *game)
 {
 	ray->hit = 0;
@@ -86,22 +42,21 @@ float	compute_corrected_dist(t_ray *ray, t_player *player, float ray_angle)
 
 	if (ray->side == 0)
 	{
-		perpwalldist = (ray->mapx - (player->x / BLOCK) + (1 - ray->stepx) / 2.0f) / ray->raydirx;
+		perpwalldist = (ray->mapx - (player->x / BLOCK)
+				+ (1 - ray->stepx) / 2.0f) / ray->raydirx;
 	}
 	else
 	{
-		perpwalldist = (ray->mapy - (player->y / BLOCK) + (1 - ray->stepy) / 2.0f) / ray->raydiry;
+		perpwalldist = (ray->mapy - (player->y / BLOCK)
+				+ (1 - ray->stepy) / 2.0f) / ray->raydiry;
 	}
 	distance_in_pixels = perpwalldist * BLOCK;
-
-	// Fisheye correction
 	angle_diff = ray_angle - player->angle;
 	distance_in_pixels *= cosf(angle_diff);
-
 	return (distance_in_pixels);
 }
 
-void draw_column(t_game *game, t_texture *texture, int column, t_line *line)
+void	draw_column(t_game *game, t_texture *texture, int column, t_line *line)
 {
 	float	step;
 	float	tex_pos;
@@ -115,16 +70,17 @@ void draw_column(t_game *game, t_texture *texture, int column, t_line *line)
 	while (y < line->end_y)
 	{
 		tex_y = (int)tex_pos & (texture->height - 1);
-		color = *(int *)(texture->data + (tex_y * texture->size_line + line->texture_x * (texture->bpp / 8)));
+		color = *(int *)(texture->data + (tex_y * texture->size_line
+					+ line->texture_x * (texture->bpp / 8)));
 		put_pixel(column, y, color, game);
 		tex_pos += step;
 		y++;
 	}
 }
 
-void calc_line(t_player *player, t_ray *ray, t_texture *texture, t_line *line)
+void	calc_line(t_player *player, t_ray *ray, t_texture *tex, t_line *line)
 {
-	float wall_x;
+	float	wall_x;
 
 	line->wall_height = (int)(BLOCK * HEIGHT / line->distance);
 	line->start_y = (HEIGHT - line->wall_height) / 2;
@@ -133,35 +89,33 @@ void calc_line(t_player *player, t_ray *ray, t_texture *texture, t_line *line)
 		line->start_y = 0;
 	if (line->end_y >= HEIGHT)
 		line->end_y = HEIGHT - 1;
-
 	if (ray->side == 0)
 		wall_x = (player->y / BLOCK) + ((line->distance / BLOCK)
-			* ray->raydiry);
+				* ray->raydiry);
 	else
 		wall_x = (player->x / BLOCK) + ((line->distance / BLOCK)
-			* ray->raydirx);
+				* ray->raydirx);
 	wall_x = wall_x - floor(wall_x);
-
-	line->texture_x = (int)(wall_x * texture->width);
+	line->texture_x = (int)(wall_x * tex->width);
 	if (line->texture_x < 0)
 		line->texture_x = 0;
-	if (line->texture_x >= texture->width)
-		line->texture_x = texture->width - 1;
+	if (line->texture_x >= tex->width)
+		line->texture_x = tex->width - 1;
 }
 
-void draw_line(t_player *player, t_game *game, float ray_angle, int column)
+void	draw_line(t_player *player, t_game *game, float ray_angle, int column)
 {
-	t_ray     ray;
-	t_line    line;
-	t_texture *texture;
-	
+	t_ray		ray;
+	t_line		line;
+	t_texture	*texture;
+
 	init_ray(&ray, player, ray_angle);
 	calc_delta_dist(&ray);
 	init_sidedist_step(&ray, player);
 	perform_dda(&ray, game);
 	texture = choose_texture(&ray, game);
 	if (!texture || !texture->data)
-		return;
+		return ;
 	line.distance = compute_corrected_dist(&ray, player, ray_angle);
 	calc_line(player, &ray, texture, &line);
 	draw_column(game, texture, column, &line);

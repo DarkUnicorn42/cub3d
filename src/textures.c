@@ -1,15 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   textures.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/15 12:11:06 by mwojtcza          #+#    #+#             */
+/*   Updated: 2025/02/15 12:20:01 by mwojtcza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
-int load_texture(t_game *game, t_texture *texture, char *path)
+int	load_texture(t_game *game, t_texture *texture, char *path)
 {
-	texture->img = mlx_xpm_file_to_image(game->mlx, path, &texture->width, &texture->height);
+	texture->img = mlx_xpm_file_to_image(game->mlx, path,
+			&texture->width, &texture->height);
 	if (!texture->img)
 		return (0);
-	texture->data = mlx_get_data_addr(texture->img, &texture->bpp, &texture->size_line, &texture->endian);
+	texture->data = mlx_get_data_addr(texture->img, &texture->bpp,
+			&texture->size_line, &texture->endian);
 	return (1);
 }
 
-int load_all_textures(t_game *game)
+int	load_all_textures(t_game *game)
 {
 	if (!load_texture(game, &game->north_texture, game->north_texture_path))
 		return (error(INVALID_FILE, game));
@@ -20,32 +34,6 @@ int load_all_textures(t_game *game)
 	if (!load_texture(game, &game->east_texture, game->east_texture_path))
 		return (error(INVALID_FILE, game));
 	return (1);
-}
-
-void free_texture(t_game *game, t_texture *texture)
-{
-	if (texture->img)
-		mlx_destroy_image(game->mlx, texture->img);
-}
-
-void free_all_textures(t_game *game)
-{
-	free_texture(game, &game->north_texture);
-	free_texture(game, &game->south_texture);
-	free_texture(game, &game->west_texture);
-	free_texture(game, &game->east_texture);
-}
-
-void free_texture_paths(t_game *game)
-{
-	if (game->north_texture_path)
-		free(game->north_texture_path);
-	if (game->south_texture_path)
-		free(game->south_texture_path);
-	if (game->west_texture_path)
-		free(game->west_texture_path);
-	if (game->east_texture_path)
-		free(game->east_texture_path);
 }
 
 t_texture	*choose_texture(t_ray *ray, t_game *game)

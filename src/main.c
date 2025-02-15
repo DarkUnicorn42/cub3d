@@ -6,65 +6,11 @@
 /*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/15 11:19:09 by mwojtcza          #+#    #+#             */
-/*   Updated: 2025/02/15 11:20:21 by mwojtcza         ###   ########.fr       */
+/*   Updated: 2025/02/15 12:26:26 by mwojtcza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3d.h"
-
-void	init_game_struct(t_game *game)
-{
-	game->mlx = NULL;
-	game->win = NULL;
-	game->img = NULL;
-	game->data = NULL;
-	game->map = NULL;
-	game->copy_map = NULL;
-	game->north_texture_path = NULL;
-	game->south_texture_path = NULL;
-	game->west_texture_path = NULL;
-	game->east_texture_path = NULL;
-}
-
-int	init_game(t_game *game, char *file)
-{
-	init_game_struct(game);
-
-	if (!validation(game, file))
-		return (0);
-	init_player(&game->player);
-	game->fd = open(file, O_RDONLY);
-	if (!parsing(game))
-		return (error(INVALID_MAP, game));
-	if (!valid_data(game))
-		return (error(INVALID_MAP, game));
-	game->mlx = mlx_init();
-	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3d");
-	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-	if (!load_all_textures(game))
-	{
-		//close_game(game);
-		return (error(INVALID_FILE, game));
-	}
-	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-	return (1);
-}
-
-void	free_map(char **map)
-{
-	int	i;
-
-	i = 0;
-	if (!map)
-		return ;
-	while (map[i])
-	{
-		free(map[i]);
-		i++;
-	}
-	free(map);
-}
 
 int	close_game(t_game *game)
 {
@@ -74,7 +20,6 @@ int	close_game(t_game *game)
 		free_map(game->map);
 	if (game->copy_map)
 		free_map(game->copy_map);
-
 	if (game->img)
 		mlx_destroy_image(game->mlx, game->img);
 	if (game->win)
@@ -131,6 +76,7 @@ int	draw_loop(t_game *game)
 	int			column;
 
 	player = &game->player;
+	rotate_player(player);
 	move_player(player, game);
 	clear_image(game);
 	draw_floor_ceiling(game);
@@ -164,8 +110,6 @@ int	main(int argc, char **argv)
 	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
 	mlx_hook(game.win, 17, 0, close_button, &game);
 	mlx_loop_hook(game.mlx, draw_loop, &game);
-
 	mlx_loop(game.mlx);
-
 	return (0);
 }
