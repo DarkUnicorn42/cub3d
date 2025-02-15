@@ -6,20 +6,20 @@
 /*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/15 12:11:06 by mwojtcza          #+#    #+#             */
-/*   Updated: 2025/02/15 12:20:01 by mwojtcza         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:11:53 by mwojtcza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3d.h"
 
-int	load_texture(t_game *game, t_texture *texture, char *path)
+int	load_texture(t_game *game, t_tex *tex, char *path)
 {
-	texture->img = mlx_xpm_file_to_image(game->mlx, path,
-			&texture->width, &texture->height);
-	if (!texture->img)
+	tex->img = mlx_xpm_file_to_image(game->mlx, path,
+			&tex->width, &tex->height);
+	if (!tex->img)
 		return (0);
-	texture->data = mlx_get_data_addr(texture->img, &texture->bpp,
-			&texture->size_line, &texture->endian);
+	tex->data = mlx_get_data_addr(tex->img, &tex->bpp,
+			&tex->size_line, &tex->endian);
 	return (1);
 }
 
@@ -36,7 +36,7 @@ int	load_all_textures(t_game *game)
 	return (1);
 }
 
-t_texture	*choose_texture(t_ray *ray, t_game *game)
+t_tex	*choose_texture(t_ray *ray, t_game *game)
 {
 	if (ray->side == 0)
 	{

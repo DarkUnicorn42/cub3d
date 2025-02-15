@@ -6,13 +6,13 @@
 /*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/15 12:12:33 by mwojtcza          #+#    #+#             */
-/*   Updated: 2025/02/15 12:12:52 by mwojtcza         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:09:27 by mwojtcza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3d.h"
 
-void	free_texture(t_game *game, t_texture *texture)
+void	free_texture(t_game *game, t_tex *texture)
 {
 	if (texture->img)
 		mlx_destroy_image(game->mlx, texture->img);

@@ -6,7 +6,7 @@
 /*   By: mwojtcza <mwojtcza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/15 11:59:33 by mwojtcza          #+#    #+#             */
-/*   Updated: 2025/02/15 12:20:21 by mwojtcza         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:08:50 by mwojtcza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ float	compute_corrected_dist(t_ray *ray, t_player *player, float ray_angle)
 	return (distance_in_pixels);
 }
 
-void	draw_column(t_game *game, t_texture *texture, int column, t_line *line)
+void	draw_column(t_game *game, t_tex *texture, int column, t_line *line)
 {
 	float	step;
 	float	tex_pos;
@@ -78,7 +78,7 @@ void	draw_column(t_game *game, t_texture *texture, int column, t_line *line)
 	}
 }
 
-void	calc_line(t_player *player, t_ray *ray, t_texture *tex, t_line *line)
+void	calc_line(t_player *player, t_ray *ray, t_tex *tex, t_line *line)
 {
 	float	wall_x;
 
@@ -107,7 +107,7 @@ void	draw_line(t_player *player, t_game *game, float ray_angle, int column)
 {
 	t_ray		ray;
 	t_line		line;
-	t_texture	*texture;
+	t_tex		*texture;
 
 	init_ray(&ray, player, ray_angle);
 	calc_delta_dist(&ray);
